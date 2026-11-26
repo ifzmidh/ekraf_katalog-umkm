@@ -1,13 +1,45 @@
 import Link from "next/link";
 import { toko } from "@/lib/toko";
+import { cn } from "@/lib/utils";
 
-export default function Header() {
+function buatUrlKategori(kategori, kataKunci) {
+  const params = new URLSearchParams();
+  if (kategori) params.set("kategori", kategori);
+  if (kataKunci) params.set("q", kataKunci);
+  const query = params.toString();
+  return query ? `/?${query}#produk` : "/#produk";
+}
+
+export default function Header({ categories = [], selectedCategory, query = "" }) {
   return (
-    <header className="border-b border-garis bg-latar">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
-        <Link href="/" className="text-lg font-extrabold tracking-tight text-utama">
+    <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
+      <div className="mx-auto flex max-w-5xl items-center gap-5 px-4 py-3">
+        <Link href="/" className="shrink-0 font-heading text-xl font-semibold tracking-tight text-primary">
           {toko.nama}
         </Link>
+        <nav aria-label="Navigasi katalog" className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto whitespace-nowrap text-sm">
+          <Link href="/#produk" className="rounded-md px-3 py-2 font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+            Katalog
+          </Link>
+          {categories.map((category) => (
+            <Link
+              key={category}
+              href={buatUrlKategori(category, query)}
+              aria-current={selectedCategory === category ? "page" : undefined}
+              className={cn(
+                "rounded-md px-3 py-2 font-medium transition-colors",
+                selectedCategory === category
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}
+            >
+              {category}
+            </Link>
+          ))}
+          <Link href="/#tentang" className="rounded-md px-3 py-2 font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+            Tentang toko
+          </Link>
+        </nav>
       </div>
     </header>
   );

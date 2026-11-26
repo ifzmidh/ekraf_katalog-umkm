@@ -1,13 +1,11 @@
-import NavAdmin from "@/components/NavAdmin";
 import FormProduk from "@/components/FormProduk";
 import { tambahProduk } from "@/app/admin/actions";
 
 // US-08: tambah produk.
 export default function HalamanTambahProduk() {
   return (
-    <div className="flex flex-col gap-6 py-8">
-      <NavAdmin />
-      <h1 className="text-2xl font-extrabold">Tambah produk</h1>
+    <div className="mx-auto flex w-full max-w-xl flex-col gap-6">
+      <p className="text-sm text-muted-foreground">Lengkapi informasi produk sebelum dipublikasikan ke katalog.</p>
       <FormProduk labelTombol="Simpan produk" aksi={tambahProduk} />
     </div>
   );

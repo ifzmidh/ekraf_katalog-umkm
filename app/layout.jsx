@@ -1,11 +1,10 @@
 import "./globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import AppChrome from "@/components/layout/app-chrome";
 import { toko } from "@/lib/toko";
 import { Geist } from "next/font/google";
-import { cn } from "@/lib/utils";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 
 export const metadata = {
   title: toko.nama,
@@ -14,19 +13,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="id" className={cn("font-sans", geist.variable)}>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap"
-        />
-      </head>
+    <html lang="id" className={geist.variable}>
       <body className="flex min-h-screen flex-col font-sans antialiased">
-        <Header />
-        <main className="mx-auto w-full max-w-5xl flex-1 px-4">{children}</main>
-        <Footer />
+        <TooltipProvider>
+          <AppChrome>{children}</AppChrome>
+        </TooltipProvider>
       </body>
     </html>
   );

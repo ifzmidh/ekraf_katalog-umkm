@@ -417,13 +417,62 @@ Implementasi **US-11 (Filter kategori atau pencarian)** telah selesai:
 
 **Perbaikan:**
 
+- **Prompt lanjutan:** _"baca docs/user-stories.md bagian ### US-11 Filter kategori atau pencarian [...] Gunakan shadcn: Input, Select atau Popover, Button, Badge. Gunakan URL searchParams agar pencarian dapat dibagikan dan dipertahankan setelah reload."_
+- Membuat komponen client baru [`components/FilterPencarian.jsx`](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/components/FilterPencarian.jsx) (`"use client"`) yang menangani UI interaktif: **Input** pencarian, **Select** (shadcn/Base UI) untuk kategori yang langsung navigate via `router.push` saat berubah, **Button** Cari + Reset dengan ikon X, **Badge** aktif menampilkan kata kunci dan kategori yang sedang difilter, serta counter jumlah hasil.
+- Menyederhanakan [`app/page.jsx`](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/page.jsx) — logika data fetching dan filter query Supabase (`.eq` + `.ilike`) tetap di Server Component; form HTML statis dan nav link kategori diganti dengan `<FilterPencarian />`.
+- Verifikasi `npm run build` berhasil tanpa error (`exit code 0`).
+
+---
+
+## US-12 Pilih jumlah atau varian
+
+**Prompt:**
+Implementasikan US-12 — Pilih jumlah atau varian. Pengunjung bisa memilih jumlah dan varian sebelum memesan, dan pilihan itu ikut tertulis di pesan WhatsApp.
+
+**Hasil:**
+Implementasi **US-12 (Pilih jumlah atau varian)** telah selesai:
+
+### File yang dibuat
+
+- [`components/PemesanProduk.jsx`](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/components/PemesanProduk.jsx) _(baru, `"use client"`)_:
+  - Mengelola state `jumlah` (default 1) dan `varian` (teks opsional) di sisi klien.
+  - Input jumlah dengan tombol **−** / **+** (`Button` variant outline, size icon) dan `Input` number di tengah.
+  - Input teks varian opsional (placeholder: "merah, ukuran L, rasa pedas…", maxLength 100).
+  - Tombol **Pesan via WhatsApp** menyusun pesan lengkap: nama produk, harga satuan, jumlah, dan varian (jika diisi), lalu membuka `wa.me/...` di tab baru.
+  - Tombol **Kembali ke katalog** menggunakan `Link` ke `/`.
+
+### File yang dimodifikasi
+
+- [`app/produk/[id]/page.jsx`](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/produk/%5Bid%5D/page.jsx) _(diubah)_:
+  - Mengganti `<TombolWhatsApp>` + `<Button>` kembali dengan `<PemesanProduk produk={produk} />`.
+  - Halaman tetap Server Component; seluruh data tetap diambil dari Supabase di server.
+
+### Acceptance criteria
+
+| Kriteria                                                  | Status |
+| --------------------------------------------------------- | ------ |
+| Pengunjung bisa memilih jumlah sebelum memesan            | ✅     |
+| Pengunjung bisa memilih varian sebelum memesan            | ✅     |
+| Pilihan jumlah dan varian ikut tertulis di pesan WhatsApp | ✅     |
+
+### Cara mengetesnya
+
+1. Jalankan `npm run dev`, buka detail produk mana saja di `/produk/[id]`.
+2. Ubah jumlah dengan tombol **−**/**+** atau ketik langsung di field jumlah.
+3. Isi varian (opsional), misalnya "ukuran L".
+4. Klik **Pesan via WhatsApp** — pastikan WhatsApp Web/app terbuka dengan pesan yang menyertakan nama produk, harga satuan, jumlah, dan varian yang dipilih.
+5. Uji tanpa varian — pastikan baris varian tidak muncul di pesan.
+6. Uji tombol **−** saat jumlah = 1 — pastikan tidak bisa dikurangi di bawah 1.
+
+**Perbaikan:**
+
 ---
 
 ## Debugging dan fitur bonus
 
 Tambahkan bagian baru untuk setiap error yang kamu perbaiki atau fitur bonus yang kamu kerjakan.
 
-### US-29 Upload foto ke Supabase Storage
+## US-29 Upload foto ke Supabase Storage
 
 **Prompt:** **[SENDIRI]**
 buatkan saya imagenya terintegrasi dengan storage supabase, sudah saya buatkan bucket yang bernama products

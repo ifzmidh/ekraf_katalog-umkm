@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import NavAdmin from "@/components/NavAdmin";
 import FormProduk from "@/components/FormProduk";
 import { buatKoneksiServer } from "@/lib/supabase/server";
 import { ubahProduk } from "@/app/admin/actions";
@@ -31,9 +30,8 @@ export default async function HalamanUbahProduk({ params }) {
   const aksiUbah = ubahProduk.bind(null, produk.id);
 
   return (
-    <div className="flex flex-col gap-6 py-8">
-      <NavAdmin />
-      <h1 className="text-2xl font-extrabold">Ubah produk</h1>
+    <div className="mx-auto flex w-full max-w-xl flex-col gap-6">
+      <p className="text-sm text-muted-foreground">Perbarui informasi produk lalu simpan perubahan.</p>
       <FormProduk produk={produk} labelTombol="Simpan perubahan" aksi={aksiUbah} />
     </div>
   );

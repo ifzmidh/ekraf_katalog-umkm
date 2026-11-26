@@ -43,12 +43,22 @@ function Button({
   className,
   variant = "default",
   size = "default",
+  render,
+  nativeButton,
   ...props
 }) {
+  // Jika render prop diisi dengan elemen non-<button> (mis. <a>, <Link>),
+  // otomatis set nativeButton=false agar Base UI tidak memunculkan warning.
+  const resolvedNativeButton = nativeButton ?? (
+    render == null ? true : render.type === "button"
+  );
+
   return (
     <ButtonPrimitive
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      render={render}
+      nativeButton={resolvedNativeButton}
       {...props}
     />
   )

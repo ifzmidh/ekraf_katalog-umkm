@@ -1,10 +1,8 @@
-import NavAdmin from "@/components/NavAdmin";
 import FormGantiPassword from "./FormGantiPassword";
 
 export default function HalamanGantiPassword() {
   return (
-    <div className="flex flex-col gap-6 py-8">
-      <NavAdmin />
+    <div className="mx-auto flex w-full max-w-xl flex-col gap-6">
       <div>
         <h1 className="text-2xl font-extrabold">Ganti password</h1>
         <p className="mt-1 text-sm text-teks-lembut">
