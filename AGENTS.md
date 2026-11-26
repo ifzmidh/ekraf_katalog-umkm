@@ -148,3 +148,51 @@ Perubahan untuk **US-02 (Detail produk)** sudah selesai.
    ```
 2. Buka beranda `http://localhost:3000`, lalu klik salah satu produk untuk membuka `/produk/[id]`. Pastikan foto, kategori, nama, harga rupiah, deskripsi, dan tombol WhatsApp tampil sesuai data dari Supabase, tanpa kotak `CatatanBelumAktif`.
 3. Buka URL dengan ID yang tidak ada (misalnya `http://localhost:3000/produk/999999` atau `http://localhost:3000/produk/abc`) dan pastikan tampil halaman "tidak ditemukan" (`404`).
+
+## Hasil (US-3) [Supabase Product Detail SSR]
+
+Analyzed toko.js:L1-10
+Analyzed TombolWhatsApp.jsx:L1-12
+Ran search for CatatanBelumAktif and WhatsApp spec
+Analyzed rancangan-teknis.md:L1-68
+Analyzed format.js:L1-7
+Analyzed page.jsx:L1-52
+Analyzed jsconfig.json:L1-7
+Ran search for US-03 references
+Edited TombolWhatsApp.jsx
+Ran build Next.js app
+
+Perubahan untuk **US-03** telah selesai diterapkan:
+
+- **[TombolWhatsApp.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/components/TombolWhatsApp.jsx)**:
+  - Mengubah `<button>` menjadi tautan `<a>` dengan `target="_blank"` dan `rel="noopener noreferrer"` agar terbuka di tab baru, sambil mempertahankan kelas styling tombol yang sama.
+  - Menggunakan `toko.nomorWhatsApp` dari [toko.js](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/lib/toko.js) dan `formatRupiah` dari [format.js](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/lib/format.js) untuk membentuk URL `https://wa.me/${toko.nomorWhatsApp}?text=${encodeURIComponent(pesan)}` yang memuat nama dan harga produk dalam format rupiah.
+- **[page.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/produk/[id]/page.jsx)**: Komponen `CatatanBelumAktif` sudah tidak ada di halaman detail produk, sehingga tidak ada yang perlu dihapus di sana.
+
+**Verifikasi:**
+
+- `npm --prefix /home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm run build` berhasil tanpa error (`exit code 0`).
+
+## Hasil (US-3) [Supabase Product Detail SSR]
+
+Analyzed toko.js:L1-10
+Analyzed TombolWhatsApp.jsx:L1-12
+Ran search for CatatanBelumAktif and WhatsApp spec
+Analyzed rancangan-teknis.md:L1-68
+Analyzed format.js:L1-7
+Analyzed page.jsx:L1-52
+Analyzed jsconfig.json:L1-7
+Ran search for US-03 references
+Edited TombolWhatsApp.jsx
+Ran build Next.js app
+
+Perubahan untuk **US-03** telah selesai diterapkan:
+
+- **[TombolWhatsApp.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/components/TombolWhatsApp.jsx)**:
+  - Mengubah `<button>` menjadi tautan `<a>` dengan `target="_blank"` dan `rel="noopener noreferrer"` agar terbuka di tab baru, sambil mempertahankan kelas styling tombol yang sama.
+  - Menggunakan `toko.nomorWhatsApp` dari [toko.js](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/lib/toko.js) dan `formatRupiah` dari [format.js](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/lib/format.js) untuk membentuk URL `https://wa.me/${toko.nomorWhatsApp}?text=${encodeURIComponent(pesan)}` yang memuat nama dan harga produk dalam format rupiah.
+- **[page.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/produk/[id]/page.jsx)**: Komponen `CatatanBelumAktif` sudah tidak ada di halaman detail produk, sehingga tidak ada yang perlu dihapus di sana.
+
+**Verifikasi:**
+
+- `npm --prefix /home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm run build` berhasil tanpa error (`exit code 0`).
