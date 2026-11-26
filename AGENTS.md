@@ -196,3 +196,53 @@ Perubahan untuk **US-03** telah selesai diterapkan:
 **Verifikasi:**
 
 - `npm --prefix /home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm run build` berhasil tanpa error (`exit code 0`).
+
+## Hasil (US-4) [Supabase Admin Login Implementation]
+
+Analyzed AGENTS.md:L1-198
+Analyzed user-stories.md:L1-614
+Analyzed server.js:L1-21
+Analyzed page.jsx:L1-28
+Analyzed NavAdmin.jsx:L1-18
+Analyzed package.json:L1-24
+Analyzed rancangan-teknis.md:L1-68
+Analyzed globals.css:L1-33
+Analyzed Input.jsx:L1-15
+Analyzed Tombol.jsx:L1-25
+Analyzed .env.example:L1-13
+Ran list admin and lib files
+Edited server.js
+Created actions.js
+Created FormLogin.jsx
+Edited page.jsx
+Edited NavAdmin.jsx
+Ran build Next.js app and check env vars
+
+Implementasi **US-04 (Login admin)** dengan Supabase Auth (`@supabase/ssr` dan cookie) di sisi server telah selesai.
+
+### File yang dibuat dan diubah
+
+- [server.js](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/lib/supabase/server.js): Menambahkan `buatKoneksiSesi()` menggunakan `createServerClient` dari `@supabase/ssr` dengan `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, dan `cookies()` dari `next/headers`.
+- [actions.js](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/admin/actions.js) _(baru)_: Menambahkan Server Action `masukAdmin` (autentikasi `signInWithPassword`, mengembalikan pesan error yang jelas jika gagal, dan `redirect("/admin")` jika berhasil) serta `keluarAdmin` (`signOut()` lalu `redirect("/admin/login")`).
+- [FormLogin.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/admin/login/FormLogin.jsx) _(baru)_: Komponen form login dengan `useActionState(masukAdmin, null)` untuk menampilkan pesan error di halaman login tanpa mengakses Supabase dari client.
+- [page.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/admin/login/page.jsx): Menyambungkan halaman login ke `FormLogin` dan menghapus `CatatanBelumAktif` tanpa mengubah tampilan.
+- [NavAdmin.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/components/NavAdmin.jsx): Menyambungkan tombol **Keluar** ke Server Action `keluarAdmin` melalui `<form action={keluarAdmin}>`.
+
+### Verifikasi
+
+- `npm --prefix /home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm run build` berhasil tanpa error (`exit code 0`).
+- Pengecekan kode memastikan tidak ada penggunaan `NEXT_PUBLIC_` di `app/`, `components/`, maupun `lib/`.
+
+### Cara mengetesnya
+
+1. Pastikan `SUPABASE_URL` dan `SUPABASE_PUBLISHABLE_KEY` di `.env.local` sudah terisi dan akun admin sudah dibuat di Supabase Auth.
+2. Jalankan server lokal di folder `ekraf_katalog-umkm`:
+   ```bash
+   npm run dev
+   ```
+3. Buka `http://localhost:3000/admin/login`:
+   - Coba masuk dengan email atau password yang salah, lalu pastikan muncul pesan error `"Email atau password salah."` di atas form.
+   - Masuk dengan email dan password admin yang benar, lalu pastikan halaman diarahkan ke `/admin` dan cookie sesi tersimpan.
+   - Klik tombol **Keluar** di navigasi admin, lalu pastikan sesi berakhir dan halaman kembali ke `/admin/login`.
+
+## Hasil (US-5) [Supabase Admin Login Implementation]
