@@ -287,3 +287,45 @@ Implementasi **US-05 (Ganti password)** sudah selesai:
    - Uji validasi: masukkan password baru kurang dari 8 karakter atau konfirmasi yang berbeda (pastikan pesan error tampil).
    - Uji berhasil: masukkan password baru minimal 8 karakter yang sama dengan konfirmasinya, klik **Simpan password**, dan pastikan muncul pesan `"Password berhasil diperbarui."`.
    - Uji keluar lalu masuk kembali memakai password baru di `/admin/login`.
+
+## Hasil (US-6) [Next.js Admin Proxy And Auth]
+
+Analyzed AGENTS.md:L1-289
+Ran search for US-06, CatatanBelumAktif, and Server Actions
+Ran list project root, lib, and app/admin directories
+Analyzed user-stories.md:L65-130
+Analyzed server.js:L1-55
+Analyzed actions.js:L1-84
+Analyzed page.jsx:L1-27
+Analyzed package.json:L1-24
+Analyzed rancangan-teknis.md:L1-68
+Ran list all files in app/admin
+Analyzed page.jsx:L1-13
+Analyzed page.jsx:L1-17
+Ran check Next.js 16 proxy.js support in node*modules
+Ran check proxy.js export convention in Next.js 16
+Created proxy.js
+Edited page.jsx
+Ran build Next.js app and check NEXT_PUBLIC* usage
+
+Implementasi **US-06 (Proteksi halaman admin)** telah selesai:
+
+### File yang dibuat dan diubah
+
+- [proxy.js](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/proxy.js) _(baru)_ — Menambahkan fungsi `proxy(request)` dengan `config.matcher` pada `["/admin", "/admin/:path*"]`. File ini memeriksa sesi login admin di sisi server menggunakan `createServerClient` dari `@supabase/ssr` (`SUPABASE_URL` dan `SUPABASE_PUBLISHABLE_KEY`), serta mengalihkan permintaan tanpa sesi valid ke `/admin/login` (kecuali rute `/admin/login` itu sendiri).
+- [page.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/admin/page.jsx) _(diubah)_ — Menghapus komponen `CatatanBelumAktif` dan komentar US-06 yang sudah tidak berlaku.
+- [actions.js](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/admin/actions.js) _(sudah memenuhi)_ — Satu-satunya Server Action pengubah data saat ini (`gantiPassword`) sudah memeriksa sesi login di server melalui `supabase.auth.getUser()` sebelum memproses perubahan.
+
+### Verifikasi
+
+- `npm --prefix /home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm run build` berhasil tanpa error, dan `ƒ Proxy (Middleware)` terdeteksi aktif.
+- Pengecekan kode memastikan tidak ada environment variable berawalan `NEXT_PUBLIC_` di `app/`, `components/`, `lib/`, maupun `proxy.js`.
+
+### Cara mengetesnya
+
+1. Jalankan server pengembangan di folder `ekraf_katalog-umkm`:
+   ```bash
+   npm run dev
+   ```
+2. Pastikan dalam keadaan belum login (atau klik **Keluar** terlebih dahulu), lalu coba buka langsung `http://localhost:3000/admin`, `http://localhost:3000/admin/password`, atau `http://localhost:3000/admin/produk/baru`. Pastikan semuanya otomatis dialihkan ke `http://localhost:3000/admin/login`.
+3. Masuk menggunakan akun admin di `/admin/login`, lalu pastikan seluruh halaman di bawah `/admin` dapat dibuka kembali dan halaman `/admin` sudah tidak menampilkan kotak `CatatanBelumAktif`.
