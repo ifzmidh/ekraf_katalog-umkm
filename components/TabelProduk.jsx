@@ -60,38 +60,78 @@ export default function TabelProduk({ daftarProduk }) {
               <th className="px-4 py-3 font-semibold">Produk</th>
               <th className="px-4 py-3 font-semibold">Kategori</th>
               <th className="px-4 py-3 font-semibold">Harga</th>
+              <th className="px-4 py-3 font-semibold">Stok</th>
               <th className="px-4 py-3 font-semibold">
                 <span className="sr-only">Aksi</span>
               </th>
             </tr>
           </thead>
           <tbody>
-            {daftarProduk.map((produk) => (
-              <tr key={produk.id} className="border-t border-garis">
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-3">
-                    <img src={produk.foto_url} alt="" className="h-10 w-10 rounded-md object-cover" />
-                    <span className="font-semibold">{produk.nama}</span>
-                  </div>
-                </td>
-                <td className="px-4 py-3 text-teks-lembut">{produk.kategori}</td>
-                <td className="px-4 py-3">{formatRupiah(produk.harga)}</td>
-                <td className="px-4 py-3">
-                  <div className="flex justify-end gap-2">
-                    <Tombol href={`/admin/produk/${produk.id}/ubah`} varian="garis">
-                      Ubah
-                    </Tombol>
-                    <Tombol
-                      type="button"
-                      varian="bahaya"
-                      onClick={() => bukaKonfirmasi(produk)}
-                    >
-                      Hapus
-                    </Tombol>
-                  </div>
-                </td>
-              </tr>
-            ))}
+            {daftarProduk.map((produk) => {
+              const diskonAktif =
+                typeof produk.harga_diskon === "number" &&
+                produk.harga_diskon > 0 &&
+                produk.harga_diskon < produk.harga;
+              const stokHabis = typeof produk.stok === "number" && produk.stok === 0;
+
+              return (
+                <tr key={produk.id} className="border-t border-garis">
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-3">
+                      {produk.foto_url ? (
+                        <img src={produk.foto_url} alt="" className="h-10 w-10 rounded-md object-cover" />
+                      ) : (
+                        <div className="h-10 w-10 rounded-md bg-permukaan" />
+                      )}
+                      <div className="flex flex-col">
+                        <span className="font-semibold">{produk.nama}</span>
+                        {produk.is_terlaris ? (
+                          <span className="text-xs font-medium text-amber-600">Terlaris</span>
+                        ) : null}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-teks-lembut">{produk.kategori}</td>
+                  <td className="px-4 py-3">
+                    {diskonAktif ? (
+                      <div className="flex flex-col">
+                        <span className="text-xs text-teks-lembut line-through">
+                          {formatRupiah(produk.harga)}
+                        </span>
+                        <span className="font-semibold">{formatRupiah(produk.harga_diskon)}</span>
+                      </div>
+                    ) : (
+                      formatRupiah(produk.harga)
+                    )}
+                  </td>
+                  <td className="px-4 py-3">
+                    {stokHabis ? (
+                      <span className="inline-block rounded-full bg-bahaya/10 px-2.5 py-0.5 text-xs font-semibold text-bahaya">
+                        Habis (0)
+                      </span>
+                    ) : (
+                      <span className="inline-block rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
+                        {produk.stok ?? 0}
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex justify-end gap-2">
+                      <Tombol href={`/admin/produk/${produk.id}/ubah`} varian="garis">
+                        Ubah
+                      </Tombol>
+                      <Tombol
+                        type="button"
+                        varian="bahaya"
+                        onClick={() => bukaKonfirmasi(produk)}
+                      >
+                        Hapus
+                      </Tombol>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

@@ -61,7 +61,7 @@ export default async function HalamanKatalog({ searchParams }) {
 
     let queryProduk = supabase
       .from("produk")
-      .select("id, nama, harga, foto_url, kategori", { count: "exact" });
+      .select("id, nama, harga, harga_diskon, stok, foto_url, kategori, is_terlaris, created_at", { count: "exact" });
 
     if (kategoriDipilih) {
       queryProduk = queryProduk.eq("kategori", kategoriDipilih);

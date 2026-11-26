@@ -11,7 +11,10 @@ export default async function HalamanProdukAdmin() {
   let pesanError = null;
   try {
     const supabase = await buatKoneksiSesi();
-    const { data, error } = await supabase.from("produk").select("id, nama, harga, foto_url, kategori").order("created_at", { ascending: false });
+    const { data, error } = await supabase
+      .from("produk")
+      .select("id, nama, harga, harga_diskon, stok, foto_url, kategori, is_terlaris")
+      .order("created_at", { ascending: false });
     if (error) {
       console.error("Gagal mengambil daftar produk admin:", error.message);
       pesanError = "Gagal mengambil daftar produk dari database. Silakan muat ulang halaman.";

@@ -645,3 +645,60 @@ supabase
 - [x] Menggunakan `KartuProduk` yang sudah ada (tidak membuat komponen baru)
 - [x] Build sukses (npm run build exit code 0)
 
+
+
+---
+
+## US-18 Galeri beberapa foto produk
+
+**Prompt:**
+Implementasi US-18 dari `docs/prompt/US-18,19,20.md`.
+
+**Hasil:**
+- **Status:** `BLOCKED` (kode selesai dan build produksi lulus; menunggu eksekusi manual `docs/migration-US-18-19-20.sql` di Supabase SQL Editor dan pengujian end-to-end di browser).
+
+### File yang dibuat dan diubah
+- [docs/migration-US-18-19-20.sql](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/docs/migration-US-18-19-20.sql) _(baru)_ — Menambahkan tabel `produk_foto` (`id`, `produk_id`, `foto_url`, `urutan`, `created_at`) dengan FK `ON DELETE CASCADE`, index `(produk_id, urutan)`, dan policy RLS `authenticated`. Kolom `produk.foto_url` dipertahankan untuk kompatibilitas data lama.
+- [components/GaleriProduk.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/components/GaleriProduk.jsx) _(baru)_ — Client component galeri interaktif dengan gambar utama, thumbnail yang dapat diklik, indikator visual thumbnail aktif (`border-primary` & `aria-pressed`), transisi ringan, serta fallback `ImageOffIcon` jika gambar gagal dimuat atau kosong.
+- [components/GambarProduk.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/components/GambarProduk.jsx) _(baru)_ — Client component gambar dengan fallback otomatis saat `onError` untuk dipakai di `ProductCard`.
+- [app/produk/[id]/page.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/produk/%5Bid%5D/page.jsx) _(diubah)_ — Mengambil `produk_foto` (urut `urutan ASC`), menggabungkan `produk.foto_url` di indeks 0 diikuti foto tambahan, lalu merender `<GaleriProduk />`.
+- [components/FormProduk.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/components/FormProduk.jsx) _(diubah)_ — Menambahkan preview foto utama baru, daftar foto galeri tersimpan dengan kontrol geser urutan (kiri/kanan) dan hapus, serta input multiple file `foto_tambahan` dengan preview.
+- [app/admin/produk/[id]/ubah/page.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/admin/produk/%5Bid%5D/ubah/page.jsx) _(diubah)_ — Menggunakan `buatKoneksiSesi()` dan mengambil daftar `produk_foto` untuk diteruskan ke `FormProduk`.
+- [app/admin/actions.js](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/admin/actions.js) _(diubah)_ — Mendukung upload beberapa foto tambahan (`unggahBeberapaFoto`), menyimpan ke `produk_foto`, serta memproses penghapusan dan pembaruan urutan foto pada `ubahProduk`.
+
+---
+
+## US-19 Status stok
+
+**Prompt:**
+Implementasi US-19 dari `docs/prompt/US-18,19,20.md`.
+
+**Hasil:**
+- **Status:** `BLOCKED` (kode selesai dan build produksi lulus; menunggu eksekusi manual `docs/migration-US-18-19-20.sql` di Supabase SQL Editor dan pengujian end-to-end di browser).
+
+### File yang dibuat dan diubah
+- [docs/migration-US-18-19-20.sql](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/docs/migration-US-18-19-20.sql) _(baru)_ — Menambahkan kolom `stok INTEGER NOT NULL DEFAULT 0 CHECK (stok >= 0)` pada tabel `produk`.
+- [app/page.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/page.jsx) & [app/produk/[id]/page.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/produk/%5Bid%5D/page.jsx) _(diubah)_ — Mengambil kolom `stok` pada query katalog, detail produk, dan produk terkait.
+- [components/design/ProductCard.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/components/design/ProductCard.jsx) _(diubah)_ — Menampilkan badge `"Habis"` (dengan gambar sedikit redup) saat `stok === 0`, dan label `"Tersedia"` saat `stok > 0`. Produk habis tetap dapat diklik menuju halaman detail.
+- [app/produk/[id]/page.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/produk/%5Bid%5D/page.jsx) _(diubah)_ — Menampilkan pill status `"Tersedia"` / `"Habis"`, serta menyembunyikan `PemesanProduk` (tombol WhatsApp) dan menampilkan pesan `"Maaf, produk ini sedang habis dan belum bisa dipesan."` saat `stok === 0`.
+- [components/FormProduk.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/components/FormProduk.jsx), [components/TabelProduk.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/components/TabelProduk.jsx), [app/admin/produk/page.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/admin/produk/page.jsx), & [app/admin/actions.js](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/admin/actions.js) _(diubah)_ — Menambahkan input `stok`, validasi bilangan bulat `>= 0` di server, dan kolom status stok di tabel admin.
+
+---
+
+## US-20 Harga coret dan badge
+
+**Prompt:**
+Implementasi US-20 dari `docs/prompt/US-18,19,20.md`.
+
+**Hasil:**
+- **Status:** `BLOCKED` (kode selesai dan build produksi lulus; menunggu eksekusi manual `docs/migration-US-18-19-20.sql` di Supabase SQL Editor dan pengujian end-to-end di browser).
+
+### File yang dibuat dan diubah
+- [docs/migration-US-18-19-20.sql](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/docs/migration-US-18-19-20.sql) _(baru)_ — Menambahkan kolom `harga_diskon INTEGER NULL CHECK (harga_diskon IS NULL OR harga_diskon >= 0)` dan `is_terlaris BOOLEAN NOT NULL DEFAULT FALSE`.
+- [components/design/ProductCard.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/components/design/ProductCard.jsx) & [app/produk/[id]/page.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/produk/%5Bid%5D/page.jsx) _(diubah)_ — Menampilkan harga normal dicoret (`line-through`) dan harga diskon sebagai harga utama jika `0 < harga_diskon < harga` (menggunakan `formatRupiah`), badge `"Baru"` otomatis dari `created_at <= 7 hari`, dan badge `"Terlaris"` dari kolom `is_terlaris` (penetapan manual admin karena belum ada tabel transaksi).
+- [components/PemesanProduk.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/components/PemesanProduk.jsx) _(diubah)_ — Menggunakan `harga_diskon` pada pesan WhatsApp saat diskon aktif.
+- [components/FormProduk.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/components/FormProduk.jsx), [components/TabelProduk.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/components/TabelProduk.jsx), & [app/admin/actions.js](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/admin/actions.js) _(diubah)_ — Menambahkan input `harga_diskon` dan checkbox `is_terlaris` serta validasi server `harga_diskon < harga`.
+
+### Verifikasi Build & Keamanan
+- `NODE_ENV=production npm --prefix /home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm run build` berhasil (`exit code 0`).
+- Pengecekan `grep` memastikan tidak ada environment variable berawalan `NEXT_PUBLIC_` di `app/`, `components/`, atau `lib/`.

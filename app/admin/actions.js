@@ -122,6 +122,17 @@ function validasiInputProduk(formData) {
   const deskripsi = String(formData.get("deskripsi") || "").trim() || null;
   const fotoFile = formData.get("foto");
 
+  // US-19: stok
+  const stokTeks = String(formData.get("stok") || "0").trim();
+  const stok = Number(stokTeks);
+  if (!Number.isFinite(stok) || !Number.isInteger(stok) || stok < 0) {
+    return { error: "Stok harus berupa bilangan bulat 0 atau lebih." };
+  }
+
+  // US-20: harga_diskon & is_terlaris
+  const hargaDiskonTeks = String(formData.get("harga_diskon") || "").trim();
+  const isTerlaris = formData.get("is_terlaris") === "true";
+
   if (!nama) {
     return { error: "Nama produk wajib diisi." };
   }
@@ -138,7 +149,31 @@ function validasiInputProduk(formData) {
     };
   }
 
-  return { nama, harga, kategori, deskripsi, fotoFile };
+  // Validasi harga_diskon
+  let hargaDiskon = null;
+  if (hargaDiskonTeks !== "" && hargaDiskonTeks !== "0") {
+    const hd = Number(hargaDiskonTeks);
+    if (!Number.isFinite(hd) || !Number.isInteger(hd) || hd < 0) {
+      return {
+        error: "Harga diskon harus berupa bilangan bulat 0 atau lebih.",
+      };
+    }
+    if (hd >= harga) {
+      return { error: "Harga diskon harus lebih rendah dari harga normal." };
+    }
+    hargaDiskon = hd;
+  }
+
+  return {
+    nama,
+    harga,
+    hargaDiskon,
+    stok,
+    isTerlaris,
+    kategori,
+    deskripsi,
+    fotoFile,
+  };
 }
 
 async function unggahFotoProduk(fotoFile) {
@@ -148,8 +183,7 @@ async function unggahFotoProduk(fotoFile) {
 
   if (!TIPE_FOTO_DIIZINKAN.has(fotoFile.type)) {
     return {
-      error:
-        "Format foto harus berupa gambar (JPG, PNG, WebP, GIF, atau SVG).",
+      error: "Format foto harus berupa gambar (JPG, PNG, WebP, GIF, atau SVG).",
     };
   }
 
@@ -176,8 +210,7 @@ async function unggahFotoProduk(fotoFile) {
 
   if (errorUpload) {
     return {
-      error:
-        "Gagal mengunggah foto ke Supabase Storage. Silakan coba lagi.",
+      error: "Gagal mengunggah foto ke Supabase Storage. Silakan coba lagi.",
     };
   }
 
@@ -186,6 +219,34 @@ async function unggahFotoProduk(fotoFile) {
     .getPublicUrl(namaFile);
 
   return { fotoUrl: dataUrl.publicUrl };
+}
+
+async function unggahBeberapaFoto(files) {
+  const urls = [];
+  for (const file of files) {
+    if (!file || typeof file !== "object" || file.size <= 0) continue;
+    const hasil = await unggahFotoProduk(file);
+    if (hasil.error) {
+      return { error: hasil.error };
+    }
+    if (hasil.fotoUrl) {
+      urls.push(hasil.fotoUrl);
+    }
+  }
+  return { urls };
+}
+
+function parseJsonIdArray(nilai) {
+  if (!nilai) return [];
+  try {
+    const parsed = JSON.parse(String(nilai));
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .map((v) => Number(v))
+      .filter((n) => Number.isInteger(n) && n > 0);
+  } catch {
+    return [];
+  }
 }
 
 export async function tambahProduk(_stateSebelumnya, formData) {
@@ -207,18 +268,51 @@ export async function tambahProduk(_stateSebelumnya, formData) {
       return { error: hasilFoto.error };
     }
 
-    const { error } = await sesi.supabase.from("produk").insert({
-      nama: input.nama,
-      harga: input.harga,
-      kategori: input.kategori,
-      foto_url: hasilFoto.fotoUrl ?? null,
-      deskripsi: input.deskripsi,
-    });
+    const fotoTambahanFiles = formData
+      .getAll("foto_tambahan")
+      .filter((f) => f && typeof f === "object" && f.size > 0);
+    const hasilGaleri = await unggahBeberapaFoto(fotoTambahanFiles);
+    if (hasilGaleri.error) {
+      return { error: hasilGaleri.error };
+    }
 
-    if (error) {
+    const { data: produkBaru, error } = await sesi.supabase
+      .from("produk")
+      .insert({
+        nama: input.nama,
+        harga: input.harga,
+        harga_diskon: input.hargaDiskon,
+        stok: input.stok,
+        is_terlaris: input.isTerlaris,
+        kategori: input.kategori,
+        foto_url: hasilFoto.fotoUrl ?? null,
+        deskripsi: input.deskripsi,
+      })
+      .select("id")
+      .single();
+
+    if (error || !produkBaru) {
       return {
         error: "Gagal menyimpan produk ke database. Silakan coba lagi.",
       };
+    }
+
+    if (hasilGaleri.urls.length > 0) {
+      const barisFoto = hasilGaleri.urls.map((url, idx) => ({
+        produk_id: produkBaru.id,
+        foto_url: url,
+        urutan: idx,
+      }));
+      const { error: errorGaleri } = await sesi.supabase
+        .from("produk_foto")
+        .insert(barisFoto);
+
+      if (errorGaleri) {
+        return {
+          error:
+            "Produk tersimpan, tetapi gagal menyimpan foto galeri tambahan.",
+        };
+      }
     }
 
     berhasil = true;
@@ -228,6 +322,7 @@ export async function tambahProduk(_stateSebelumnya, formData) {
 
   if (berhasil) {
     revalidatePath("/admin");
+    revalidatePath("/admin/produk");
     revalidatePath("/");
     redirect("/admin");
   }
@@ -257,9 +352,20 @@ export async function ubahProduk(id, _stateSebelumnya, formData) {
       return { error: hasilFoto.error };
     }
 
+    const fotoTambahanFiles = formData
+      .getAll("foto_tambahan")
+      .filter((f) => f && typeof f === "object" && f.size > 0);
+    const hasilGaleri = await unggahBeberapaFoto(fotoTambahanFiles);
+    if (hasilGaleri.error) {
+      return { error: hasilGaleri.error };
+    }
+
     const dataUpdate = {
       nama: input.nama,
       harga: input.harga,
+      harga_diskon: input.hargaDiskon,
+      stok: input.stok,
+      is_terlaris: input.isTerlaris,
       kategori: input.kategori,
       deskripsi: input.deskripsi,
     };
@@ -284,6 +390,48 @@ export async function ubahProduk(id, _stateSebelumnya, formData) {
       return { error: "Produk tidak ditemukan." };
     }
 
+    const hapusFotoIds = parseJsonIdArray(formData.get("hapus_foto_ids"));
+    if (hapusFotoIds.length > 0) {
+      const { error: errorHapus } = await sesi.supabase
+        .from("produk_foto")
+        .delete()
+        .eq("produk_id", idTeks)
+        .in("id", hapusFotoIds);
+
+      if (errorHapus) {
+        return { error: "Gagal menghapus foto galeri yang dipilih." };
+      }
+    }
+
+    const urutanFotoLama = parseJsonIdArray(formData.get("urutan_foto_lama"));
+    for (let idx = 0; idx < urutanFotoLama.length; idx++) {
+      const { error: errorUrut } = await sesi.supabase
+        .from("produk_foto")
+        .update({ urutan: idx })
+        .eq("id", urutanFotoLama[idx])
+        .eq("produk_id", idTeks);
+
+      if (errorUrut) {
+        return { error: "Gagal memperbarui urutan foto galeri." };
+      }
+    }
+
+    if (hasilGaleri.urls.length > 0) {
+      const mulaiUrutan = urutanFotoLama.length;
+      const barisFoto = hasilGaleri.urls.map((url, idx) => ({
+        produk_id: Number(idTeks),
+        foto_url: url,
+        urutan: mulaiUrutan + idx,
+      }));
+      const { error: errorGaleri } = await sesi.supabase
+        .from("produk_foto")
+        .insert(barisFoto);
+
+      if (errorGaleri) {
+        return { error: "Gagal menyimpan foto galeri baru." };
+      }
+    }
+
     berhasil = true;
   } catch {
     return { error: "Terjadi kesalahan pada server saat memperbarui produk." };
@@ -291,6 +439,7 @@ export async function ubahProduk(id, _stateSebelumnya, formData) {
 
   if (berhasil) {
     revalidatePath("/admin");
+    revalidatePath("/admin/produk");
     revalidatePath("/");
     revalidatePath(`/produk/${idTeks}`);
     revalidatePath(`/admin/produk/${idTeks}/ubah`);

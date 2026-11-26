@@ -35,10 +35,16 @@ export default function PemesanProduk({ produk }) {
 
   function buatPesan() {
     const bagianVarian = varian.trim() ? `, varian: ${varian.trim()}` : "";
+    const diskonAktif =
+      typeof produk.harga_diskon === "number" &&
+      produk.harga_diskon > 0 &&
+      produk.harga_diskon < produk.harga;
+    const hargaSatuan = diskonAktif ? produk.harga_diskon : produk.harga;
+
     return (
       `Halo ${toko.nama}, saya ingin memesan:\n` +
       `- Produk: ${produk.nama}\n` +
-      `- Harga satuan: ${formatRupiah(produk.harga)}\n` +
+      `- Harga satuan: ${formatRupiah(hargaSatuan)}\n` +
       `- Jumlah: ${jumlah}${bagianVarian}\n\n` +
       `Apakah masih tersedia?`
     );
