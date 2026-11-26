@@ -4,6 +4,9 @@ const nextConfig = {
   typescript: { ignoreBuildErrors: true },
   experimental: {
     agentUpgrade: "security",
+    serverActions: {
+      bodySizeLimit: "3mb",
+    },
   },
 };
 

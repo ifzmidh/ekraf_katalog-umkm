@@ -2,6 +2,8 @@
 
 Catat prompt penting selama membangun aplikasi: apa yang kamu minta, hasilnya, dan perbaikan yang dilakukan. Beri tanda **[SENDIRI]** untuk prompt yang kamu tulis sendiri (bukan dari lembar kerja).
 
+---
+
 ## US-01 Katalog dari database
 
 **Prompt:**
@@ -12,38 +14,6 @@ Ubah app/page.jsx supaya daftar produk diambil dari tabel "produk" di Supabase, 
 Tampilkan produk dengan komponen KartuProduk yang sudah ada, tanpa mengubah tampilannya. Kalau gagal mengambil data, tampilkan pesan error yang jelas di halaman. Kalau tabel kosong, tampilkan tulisan "Belum ada produk". Hapus CatatanBelumAktif dari halaman ini.
 
 **Hasil:**
-[Integrasi Supabase untuk Daftar Produk]
-
-Analyzed AGENTS.md:L1-52
-Analyzed user-stories.md:L1-614
-Analyzed page.jsx:L1-36
-Analyzed package.json:L1-24
-Ran list project files
-Analyzed rancangan-teknis.md:L1-68
-Analyzed schema.sql:L1-90
-Analyzed DESIGN.md:L1-51
-Analyzed globals.css:L1-33
-Analyzed KartuProduk.jsx:L1-24
-Analyzed data-contoh.js:L1-59
-Analyzed .env.example:L1-13
-Analyzed next.config.mjs:L1-7
-Analyzed PRD.md:L1-59
-Analyzed skema-database.md:L1-26
-Analyzed checklist-keamanan.md:L1-13
-Analyzed jsconfig.json:L1-8
-Analyzed layout.jsx:L1-29
-Analyzed CatatanBelumAktif.jsx:L1-9
-Analyzed checklist-pengujian.md:L1-26
-Analyzed page.jsx:L1-28
-Analyzed page.jsx:L1-40
-Analyzed not-found.jsx:L1-11
-Analyzed Input.jsx:L1-15
-Ran check env variables status
-Created server.js
-Edited page.jsx
-Ran build Next.js application
-Ran check for NEXT_PUBLIC usage
-
 Perubahan untuk **US-01 (Katalog dari database)** sudah selesai:
 
 ### File yang dibuat dan diubah
@@ -57,7 +27,7 @@ Perubahan untuk **US-01 (Katalog dari database)** sudah selesai:
   - Menampilkan tulisan `"Belum ada produk"` jika tabel `produk` kosong.
   - Menghapus `CatatanBelumAktif` dan ketergantungan pada [data-contoh.js](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/lib/data-contoh.js) dari halaman ini.
 
-### Verifikasi yang sudah dijalankan
+### Verifikasi
 
 - `npm --prefix /home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm run build` berhasil tanpa error, dan rute `/` terdeteksi sebagai dynamic server-rendered (`ƒ /`).
 - Pengecekan kode memastikan tidak ada environment variable berawalan `NEXT_PUBLIC_`.
@@ -77,24 +47,14 @@ Perubahan untuk **US-01 (Katalog dari database)** sudah selesai:
 
 **Perbaikan:**
 
+---
+
 ## US-02 Detail produk
 
 **Prompt:**
 
 **Hasil:**
-[Supabase Product Detail SSR]
-
-Analyzed user-stories.md:L1-614
-Analyzed page.jsx:L1-40
-Analyzed server.js:L1-21
-Analyzed page.jsx:L1-64
-Analyzed AGENTS.md:L1-117
-Analyzed schema.sql:L1-90
-Analyzing not-found.jsx
-Edited page.jsx
-Ran build Next.js application
-
-Perubahan untuk **US-02 (Detail produk)** sudah selesai.
+Perubahan untuk **US-02 (Detail produk)** sudah selesai:
 
 ### File yang diubah
 
@@ -119,64 +79,36 @@ Perubahan untuk **US-02 (Detail produk)** sudah selesai.
 
 **Perbaikan:**
 
+---
+
 ## US-03 Pesan via WhatsApp
 
 **Prompt:**
 
 **Hasil:**
-[Supabase Product Detail SSR]
+Perubahan untuk **US-03 (Pesan via WhatsApp)** telah selesai diterapkan:
 
-Analyzed toko.js:L1-10
-Analyzed TombolWhatsApp.jsx:L1-12
-Ran search for CatatanBelumAktif and WhatsApp spec
-Analyzed rancangan-teknis.md:L1-68
-Analyzed format.js:L1-7
-Analyzed page.jsx:L1-52
-Analyzed jsconfig.json:L1-7
-Ran search for US-03 references
-Edited TombolWhatsApp.jsx
-Ran build Next.js app
+### File yang diubah
 
-Perubahan untuk **US-03** telah selesai diterapkan:
-
-- **[TombolWhatsApp.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/components/TombolWhatsApp.jsx)**:
+- [TombolWhatsApp.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/components/TombolWhatsApp.jsx):
   - Mengubah `<button>` menjadi tautan `<a>` dengan `target="_blank"` dan `rel="noopener noreferrer"` agar terbuka di tab baru, sambil mempertahankan kelas styling tombol yang sama.
   - Menggunakan `toko.nomorWhatsApp` dari [toko.js](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/lib/toko.js) dan `formatRupiah` dari [format.js](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/lib/format.js) untuk membentuk URL `https://wa.me/${toko.nomorWhatsApp}?text=${encodeURIComponent(pesan)}` yang memuat nama dan harga produk dalam format rupiah.
-- **[page.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/produk/[id]/page.jsx)**: Komponen `CatatanBelumAktif` sudah tidak ada di halaman detail produk, sehingga tidak ada yang perlu dihapus di sana.
+- [page.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/produk/[id]/page.jsx): Komponen `CatatanBelumAktif` sudah tidak ada di halaman detail produk, sehingga tidak ada yang perlu dihapus di sana.
 
-**Verifikasi:**
+### Verifikasi
 
 - `npm --prefix /home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm run build` berhasil tanpa error (`exit code 0`).
 
 **Perbaikan:**
+
+---
 
 ## US-04 Login admin
 
 **Prompt:**
 
 **Hasil:**
-[Supabase Admin Login Implementation]
-
-Analyzed AGENTS.md:L1-198
-Analyzed user-stories.md:L1-614
-Analyzed server.js:L1-21
-Analyzed page.jsx:L1-28
-Analyzed NavAdmin.jsx:L1-18
-Analyzed package.json:L1-24
-Analyzed rancangan-teknis.md:L1-68
-Analyzed globals.css:L1-33
-Analyzed Input.jsx:L1-15
-Analyzed Tombol.jsx:L1-25
-Analyzed .env.example:L1-13
-Ran list admin and lib files
-Edited server.js
-Created actions.js
-Created FormLogin.jsx
-Edited page.jsx
-Edited NavAdmin.jsx
-Ran build Next.js app and check env vars
-
-Implementasi **US-04 (Login admin)** dengan Supabase Auth (`@supabase/ssr` dan cookie) di sisi server telah selesai.
+Implementasi **US-04 (Login admin)** dengan Supabase Auth (`@supabase/ssr` dan cookie) di sisi server telah selesai:
 
 ### File yang dibuat dan diubah
 
@@ -205,30 +137,13 @@ Implementasi **US-04 (Login admin)** dengan Supabase Auth (`@supabase/ssr` dan c
 
 **Perbaikan:**
 
+---
+
 ## US-05 Ganti password
 
 **Prompt:**
 
 **Hasil:**
-[Supabase Admin Login Implementation]
-
-Analyzed user-stories.md:L1-614
-Analyzed actions.js:L1-41
-Analyzed page.jsx:L1-42
-Analyzed AGENTS.md:L1-120
-Ran list lib and components directories
-Analyzed page.jsx:L1-13
-Analyzed server.js:L1-55
-Analyzed Input.jsx:L1-15
-Analyzed Tombol.jsx:L1-25
-Analyzed FormLogin.jsx:L1-34
-Analyzed globals.css:L1-33
-Edited actions.js
-Created FormGantiPassword.jsx
-Edited page.jsx
-Ran build Next.js application
-Ran check for NEXT*PUBLIC* usage
-
 Implementasi **US-05 (Ganti password)** sudah selesai:
 
 ### File yang dibuat dan diubah
@@ -240,7 +155,7 @@ Implementasi **US-05 (Ganti password)** sudah selesai:
 - [FormGantiPassword.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/admin/password/FormGantiPassword.jsx) _(baru)_ — Client Component untuk form ganti password menggunakan `useActionState(gantiPassword, null)`, menampilkan pesan error (`role="alert"`) dan pesan berhasil (`role="status"`) dengan tampilan form yang tetap sama.
 - [page.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/admin/password/page.jsx) _(diubah)_ — Menyambungkan halaman ke `FormGantiPassword` dan menghapus `CatatanBelumAktif`.
 
-### Verifikasi yang sudah dijalankan
+### Verifikasi
 
 - `npm --prefix /home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm run build` berhasil tanpa error.
 - Pengecekan kode memastikan tidak ada environment variable berawalan `NEXT_PUBLIC_`.
@@ -255,31 +170,13 @@ Implementasi **US-05 (Ganti password)** sudah selesai:
 
 **Perbaikan:**
 
+---
+
 ## US-06 Proteksi halaman admin
 
 **Prompt:**
 
 **Hasil:**
-[Next.js Admin Proxy And Auth]
-
-Analyzed AGENTS.md:L1-289
-Ran search for US-06, CatatanBelumAktif, and Server Actions
-Ran list project root, lib, and app/admin directories
-Analyzed user-stories.md:L65-130
-Analyzed server.js:L1-55
-Analyzed actions.js:L1-84
-Analyzed page.jsx:L1-27
-Analyzed package.json:L1-24
-Analyzed rancangan-teknis.md:L1-68
-Ran list all files in app/admin
-Analyzed page.jsx:L1-13
-Analyzed page.jsx:L1-17
-Ran check Next.js 16 proxy.js support in node*modules
-Ran check proxy.js export convention in Next.js 16
-Created proxy.js
-Edited page.jsx
-Ran build Next.js app and check NEXT_PUBLIC* usage
-
 Implementasi **US-06 (Proteksi halaman admin)** telah selesai:
 
 ### File yang dibuat dan diubah
@@ -304,11 +201,269 @@ Implementasi **US-06 (Proteksi halaman admin)** telah selesai:
 
 **Perbaikan:**
 
+---
+
+## US-07 List Produk
+
+**Prompt:** **[SENDIRI]**
+Baca AGENTS.md dan docs/user-stories.md bagian US-07.
+
+dan memenuhi kriteria dibawah:
+`app/admin/page.jsx` memakai `produkContoh`, bukan query database. Query Supabase di katalog publik tidak memenuhi kriteria halaman admin.
+
+taruh hasilnya di format PROMPTS.md dengan format yang sudah dibuat sebelumnya di PROMPTS.md
+
+**Hasil:**
+Implementasi **US-07 (List Produk)** di halaman admin telah selesai:
+
+### File yang diubah
+
+- [page.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/admin/page.jsx) _(diubah)_:
+  - Mengubah `HalamanAdmin` menjadi `async` Server Component dengan `export const dynamic = "force-dynamic"` agar selalu mengambil data terbaru di sisi server.
+  - Mengambil daftar produk (`id`, `nama`, `harga`, `foto_url`, `kategori`) dari tabel `produk` di Supabase menggunakan `buatKoneksiServer()` dari [server.js](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/lib/supabase/server.js), diurutkan dari `created_at` terbaru.
+  - Menghapus ketergantungan pada `produkContoh` dari [data-contoh.js](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/lib/data-contoh.js).
+  - Menambahkan penanganan error (`role="alert"`) jika query/koneksi gagal serta tampilan `"Belum ada produk"` jika tabel kosong, sambil mempertahankan `NavAdmin`, tombol `Tambah produk`, dan `TabelProduk`.
+
+### Verifikasi
+
+- `NODE_ENV=production npm --prefix /home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm run build` berhasil tanpa error (`exit code 0`), dengan rute `ƒ /admin` terdeteksi sebagai dynamic server-rendered dan `ƒ Proxy (Middleware)` aktif.
+- Pengecekan kode memastikan tidak ada environment variable berawalan `NEXT_PUBLIC_` di `app/`, `components/`, `lib/`, maupun `proxy.js`.
+
+### Cara mengetesnya
+
+1. Jalankan server pengembangan di folder `ekraf_katalog-umkm`:
+   ```bash
+   npm run dev
+   ```
+2. Masuk sebagai admin melalui `http://localhost:3000/admin/login`.
+3. Buka `http://localhost:3000/admin` dan pastikan daftar produk di `TabelProduk` berasal dari tabel `produk` di Supabase (bukan `produkContoh`).
+4. Pastikan juga membuka `/admin` tanpa login tetap dialihkan ke `/admin/login` oleh `proxy.js`.
+
+**Perbaikan:**
+
+---
+
+## US-08 Tambah produk
+
+**Prompt:** **[SENDIRI]**
+Baca AGENTS.md dan docs/user-stories.md bagian US-08.
+
+`FormProduk` tidak terhubung ke aksi penyimpanan. Tidak ada insert ke database atau redirect ke `/admin` setelah simpan. Proxy melindungi rute, tetapi belum ada aksi tambah yang bisa dilindungi.
+
+taruh hasilnya di format PROMPTS.md dengan format yang sudah dibuat sebelumnya di PROMPTS.md
+
+**Hasil:**
+Implementasi **US-08 (Tambah produk)** telah selesai:
+
+### File yang diubah
+
+- [actions.js](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/admin/actions.js#L86-L138) _(diubah)_:
+  - Menambahkan Server Action `tambahProduk` yang memeriksa sesi login admin di server melalui `buatKoneksiSesi()` dan `supabase.auth.getUser()` sebelum memproses data.
+  - Memvalidasi `nama` (wajib) dan `harga` (bilangan bulat ≥ 0), lalu menyimpan produk baru ke tabel `produk` di Supabase (`nama`, `harga`, `kategori`, `foto_url`, `deskripsi`).
+  - Memanggil `revalidatePath("/admin")`, `revalidatePath("/")`, dan `redirect("/admin")` setelah penyimpanan berhasil.
+- [FormProduk.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/components/FormProduk.jsx) _(diubah)_:
+  - Mengubah komponen menjadi Client Component (`"use client"`) dengan `useActionState` untuk menghubungkan `<form>` ke prop `aksi`, menampilkan pesan error (`role="alert"`), dan menonaktifkan tombol submit saat proses penyimpanan berlangsung.
+- [page.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/admin/produk/baru/page.jsx) _(diubah)_:
+  - Menghubungkan `FormProduk` dengan Server Action `tambahProduk` melalui prop `aksi={tambahProduk}` dan menghapus komponen `CatatanBelumAktif`.
+
+### Verifikasi
+
+- `NODE_ENV=production npm --prefix /home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm run build` berhasil tanpa error (`exit code 0`), dengan rute `/admin/produk/baru` dan `ƒ Proxy (Middleware)` terdeteksi aktif.
+- Pengecekan kode memastikan tidak ada environment variable berawalan `NEXT_PUBLIC_` di `app/`, `components/`, `lib/`, maupun `proxy.js`.
+
+### Cara mengetesnya
+
+1. Jalankan server pengembangan di folder `ekraf_katalog-umkm`:
+   ```bash
+   npm run dev
+   ```
+2. Masuk sebagai admin melalui `http://localhost:3000/admin/login`, lalu buka `http://localhost:3000/admin/produk/baru`.
+3. Isi form produk baru dan klik **Simpan produk**:
+   - Pastikan halaman otomatis diarahkan kembali ke `/admin`.
+   - Pastikan produk baru muncul di daftar produk `/admin` maupun katalog `/`.
+4. Untuk menguji proteksi login di server, pastikan tanpa sesi login yang valid akses ke `/admin/produk/baru` dialihkan ke `/admin/login` dan `tambahProduk` menolak permintaan tanpa sesi admin.
+
+**Perbaikan:**
+
+---
+
+## US-09 Ubah produk
+
+**Prompt:** **[SENDIRI]**
+Baca AGENTS.md dan docs/user-stories.md bagian US-09.
+
+pastikan memenuhi kriteria dibawah ini:
+Form terisi lewat `cariProdukContoh(id)`, bukan data produk dari database. Tidak ada aksi update ke database yang memeriksa sesi login.
+
+dan taruh semua history di chat ini ke PROMPTS.md
+
+**Hasil:**
+Implementasi **US-09 (Ubah produk)** telah selesai:
+
+### File yang diubah
+
+- [actions.js](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/admin/actions.js#L104-L299) _(diubah)_:
+  - Mengekstrak helper bersama `periksaSesiAdmin()`, `validasiInputProduk()`, dan `unggahFotoProduk()` agar tidak ada duplikasi logika antara `tambahProduk` dan `ubahProduk`.
+  - Menambahkan Server Action `ubahProduk(id, _stateSebelumnya, formData)` yang memeriksa sesi login admin di server melalui `buatKoneksiSesi()` dan `supabase.auth.getUser()` sebelum memproses perubahan.
+  - Memvalidasi `id` produk, `nama`, `harga`, serta mengunggah foto baru ke bucket `products` jika dipilih (atau mempertahankan `foto_url` lama jika tidak ada file baru), lalu memperbarui baris produk di tabel `produk` Supabase.
+  - Memanggil `revalidatePath("/admin")`, `revalidatePath("/")`, `revalidatePath("/produk/[id]")`, `revalidatePath("/admin/produk/[id]/ubah")`, dan `redirect("/admin")` setelah berhasil.
+- [page.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/admin/produk/[id]/ubah/page.jsx) _(diubah)_:
+  - Menambahkan `export const dynamic = "force-dynamic"` dan mengganti `cariProdukContoh(id)` dengan query ke tabel `produk` di Supabase via `buatKoneksiServer()` (memanggil `notFound()` jika `id` tidak valid atau produk tidak ditemukan).
+  - Menghapus komponen `CatatanBelumAktif` dan menghubungkan `FormProduk` ke Server Action `ubahProduk.bind(null, produk.id)`.
+
+### Verifikasi
+
+- `NODE_ENV=production npm --prefix /home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm run build` berhasil tanpa error (`exit code 0`), dengan rute `ƒ /admin/produk/[id]/ubah` terdeteksi sebagai dynamic server-rendered dan `ƒ Proxy (Middleware)` aktif.
+- Pengecekan kode memastikan tidak ada environment variable berawalan `NEXT_PUBLIC_` di `app/`, `components/`, `lib/`, maupun `proxy.js`.
+
+### Cara mengetesnya
+
+1. Jalankan server pengembangan di folder `ekraf_katalog-umkm`:
+   ```bash
+   npm run dev
+   ```
+2. Masuk sebagai admin melalui `http://localhost:3000/admin/login`, lalu klik **Ubah** pada salah satu produk di `/admin` untuk membuka `http://localhost:3000/admin/produk/[id]/ubah`.
+3. Pastikan form sudah terisi data produk dari database Supabase (bukan data contoh).
+4. Ubah data produk (misalnya nama, harga, kategori, deskripsi, atau unggah foto baru) lalu klik **Simpan perubahan**:
+   - Pastikan halaman diarahkan kembali ke `/admin` dan perubahan tersimpan di `/admin` maupun katalog `/`.
+5. Untuk menguji proteksi login di server, pastikan tanpa sesi login yang valid akses ke `/admin/produk/[id]/ubah` dialihkan ke `/admin/login` dan `ubahProduk` menolak permintaan tanpa sesi admin.
+
+**Perbaikan:**
+
+---
+
+## US-10 Hapus produk
+
+**Prompt:** **[SENDIRI]**
+Baca AGENTS.md dan docs/user-stories.md bagian US-10.
+
+pastikan memenuhi kriteria dibawah ini:
+`TabelProduk.jsx` menampilkan tombol Hapus tanpa konfirmasi atau handler. Tidak ada aksi hapus database yang memeriksa sesi login.
+
+dan taruh semua history di chat ini ke PROMPTS.md
+
+**Hasil:**
+Implementasi **US-10 (Hapus produk)** telah selesai:
+
+### File yang diubah
+
+- [actions.js](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/admin/actions.js#L301-L341) _(diubah)_:
+  - Menambahkan Server Action `hapusProduk(id)` yang memeriksa sesi login admin di server melalui `periksaSesiAdmin()` (`buatKoneksiSesi()` dan `supabase.auth.getUser()`) sebelum menjalankan penghapusan.
+  - Memvalidasi `id` produk, menghapus baris produk di tabel `produk` Supabase (`.delete().eq("id", idTeks)`), serta memanggil `revalidatePath("/admin")`, `revalidatePath("/")`, `revalidatePath("/produk/[id]")`, dan `revalidatePath("/admin/produk/[id]/ubah")`.
+- [TabelProduk.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/components/TabelProduk.jsx) _(diubah)_:
+  - Mengubah komponen menjadi Client Component (`"use client"`) dengan dialog konfirmasi (`role="dialog"`) sebelum memanggil Server Action `hapusProduk(id)` melalui `useTransition` dan `router.refresh()`.
+  - Menampilkan pesan error (`role="alert"`) jika penghapusan gagal atau sesi tidak valid, serta menonaktifkan tombol aksi selama proses penghapusan berlangsung.
+
+### Verifikasi
+
+- `NODE_ENV=production npm --prefix /home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm run build` berhasil tanpa error (`exit code 0`), dengan rute `ƒ /admin` terdeteksi sebagai dynamic server-rendered dan `ƒ Proxy (Middleware)` aktif.
+- Pengecekan kode memastikan tidak ada environment variable berawalan `NEXT_PUBLIC_` di `app/`, `components/`, `lib/`, maupun `proxy.js`.
+
+### Cara mengetesnya
+
+1. Jalankan server pengembangan di folder `ekraf_katalog-umkm`:
+   ```bash
+   npm run dev
+   ```
+2. Masuk sebagai admin melalui `http://localhost:3000/admin/login`, lalu buka `http://localhost:3000/admin`.
+3. Klik tombol **Hapus** pada salah satu produk dan pastikan muncul dialog konfirmasi (**Batal** / **Ya, hapus**):
+   - Klik **Batal** untuk memastikan produk tidak terhapus.
+   - Klik **Ya, hapus** untuk memastikan produk terhapus dari database serta hilang dari daftar `/admin` dan katalog `/`.
+4. Untuk menguji proteksi login di server, pastikan tanpa sesi login yang valid akses ke `/admin` dialihkan ke `/admin/login` dan `hapusProduk` menolak permintaan tanpa sesi admin.
+
+**Perbaikan:**
+
+---
+
+## US-11 Filter kategori atau pencarian
+
+**Prompt:** **[SENDIRI]**
+Baca AGENTS.md dan docs/user-stories.md bagian US-011.
+
+pastikan memenuhi kriteria dibawah ini:
+US-11 Filter kategori atau pencarian (0/10)
+`app/page.jsx` menampilkan label kategori, tetapi tidak menyediakan kontrol filter kategori atau pencarian nama. Query tidak menerapkan keduanya.
+
+dan taruh semua history di chat ini ke PROMPTS.md
+
+**Hasil:**
+Implementasi **US-11 (Filter kategori atau pencarian)** telah selesai:
+
+### File yang diubah
+
+- [page.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/page.jsx) _(diubah)_:
+  - Membaca `searchParams` (`await searchParams`) untuk parameter `kategori` dan `q`.
+  - Menerapkan filter langsung pada query Supabase: `.eq("kategori", kategoriDipilih)` jika kategori dipilih dan `.ilike("nama", `%${polaCari}%`)` jika kata kunci pencarian diisi, serta mengambil daftar kategori unik dari kolom `kategori` tabel `produk`.
+  - Menambahkan form pencarian nama produk (`method="GET"`, memakai komponen `Input` dan `Tombol`, serta menjaga `kategori` lewat hidden input) dan navigasi tombol filter kategori (`Semua` serta setiap kategori dari database, menjaga `q` di URL lewat helper `buatUrlKatalog`).
+  - Menambahkan tombol `Reset` / `Tampilkan semua produk` dan pesan kosong yang jelas saat filter atau pencarian tidak menemukan produk.
+
+### Verifikasi
+
+- `NODE_ENV=production npm --prefix /home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm run build` berhasil tanpa error (`exit code 0`), dengan rute `ƒ /` terdeteksi sebagai dynamic server-rendered dan `ƒ Proxy (Middleware)` aktif.
+- Pengecekan `grep` memastikan tidak ada environment variable berawalan `NEXT_PUBLIC_` di `app/`, `components/`, `lib/`, maupun `proxy.js`.
+
+### Cara mengetesnya
+
+1. Jalankan server pengembangan di folder `ekraf_katalog-umkm`:
+   ```bash
+   npm run dev
+   ```
+2. Buka `http://localhost:3000/` dan pastikan daftar tombol kategori tampil di atas grid produk beserta kolom **Cari nama produk**.
+3. Klik salah satu tombol kategori (misalnya **Minuman**):
+   - Pastikan URL berubah menjadi `/?kategori=Minuman` dan hanya produk berkategori tersebut yang tampil.
+4. Ketik kata kunci pada kolom **Cari nama produk** lalu klik **Cari**:
+   - Pastikan URL menyertakan parameter `q=...` (dan tetap mempertahankan `kategori=...` jika sedang aktif) serta daftar produk tersaring sesuai nama yang dicari.
+5. Klik **Semua** atau **Reset** untuk kembali menampilkan seluruh produk, dan uji kata kunci yang tidak cocok untuk memastikan pesan kosong serta tombol **Tampilkan semua produk** muncul.
+
+**Perbaikan:**
+
+---
+
 ## Debugging dan fitur bonus
 
 Tambahkan bagian baru untuk setiap error yang kamu perbaiki atau fitur bonus yang kamu kerjakan.
 
-## K-10 Dependensi tanpa kerentanan kritis
+### US-29 Upload foto ke Supabase Storage
+
+**Prompt:** **[SENDIRI]**
+buatkan saya imagenya terintegrasi dengan storage supabase, sudah saya buatkan bucket yang bernama products
+
+**Hasil:**
+Integrasi upload foto produk ke bucket Supabase Storage **`products`** di sisi server telah selesai:
+
+#### File yang diubah
+
+- [FormProduk.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/components/FormProduk.jsx#L34-L54) _(diubah)_:
+  - Menambahkan input file `foto` (`accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml"`) untuk mengunggah foto produk dari komputer.
+- [actions.js](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/admin/actions.js#L1-L162) _(diubah)_:
+  - Memvalidasi tipe file gambar (`JPG`, `PNG`, `WebP`, `GIF`, `SVG`) dan ukuran maksimal `2 MB` di server.
+  - Setelah verifikasi sesi login admin via `buatKoneksiSesi()`, mengunggah file ke bucket `products` menggunakan `buatKoneksiServer()` di server (tanpa mengekspos kunci ke browser), lalu menyimpan `publicUrl` hasil `getPublicUrl()` ke kolom `foto_url` pada tabel `produk`.
+- [next.config.mjs](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/next.config.mjs#L5-L10) _(diubah)_:
+  - Menambahkan `experimental.serverActions.bodySizeLimit: "3mb"` agar unggahan foto hingga 2 MB tidak tertolak batas default 1 MB Server Action.
+
+#### Verifikasi
+
+- `NODE_ENV=production npm --prefix /home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm run build` berhasil tanpa error (`exit code 0`).
+- Pengecekan kode memastikan tidak ada environment variable berawalan `NEXT_PUBLIC_` di `app/`, `components/`, `lib/`, maupun `proxy.js`.
+
+#### Cara mengetesnya
+
+1. Pastikan di Supabase Dashboard > **Storage**, bucket **`products`** sudah berstatus **Public** agar URL publik gambar bisa tampil di katalog `/` dan detail produk.
+2. Jalankan `npm run dev`, masuk sebagai admin di `/admin/login`, lalu buka `http://localhost:3000/admin/produk/baru`.
+3. Isi nama & harga produk, pilih file gambar di kolom **Foto produk**, lalu klik **Simpan produk**:
+   - Pastikan halaman kembali ke `/admin` dan foto produk tampil di `/admin` serta `/`.
+   - Uji mengunggah file non-gambar atau file > 2 MB untuk memastikan pesan error validasi tampil di form.
+
+**Perbaikan:**
+
+- **Prompt lanjutan:** _"disitu masih ada link foto. saya mau full integrate dengan supabase"_
+- Menghapus input teks **Link foto** (`foto_url`) dari [FormProduk.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/components/FormProduk.jsx#L34-L54) dan menampilkan pratinjau foto lama jika `produk.foto_url` sudah ada.
+- Menghapus pembacaan input manual `foto_url` dari `formData` di [actions.js](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/admin/actions.js#L108-L110), sehingga `foto_url` hanya berasal dari unggahan ke bucket `products` di Supabase Storage.
+- Verifikasi ulang `NODE_ENV=production npm --prefix /home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm run build` berhasil tanpa error (`exit code 0`).
+
+---
+
+### K-10 Dependensi tanpa kerentanan kritis
 
 **Prompt:**
 Upgrade Next.js pada aplikasi di `/home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm` dari versi `16.4.3` ke `16.4.6` karena versi terpasang terdampak security advisory, serta tambahkan `experimental.agentUpgrade: "security"` di konfigurasi Next.js tanpa mengubah konfigurasi lainnya. Setelah selesai, lakukan verifikasi dan jalankan perintah laporan upgrade.
