@@ -1,12 +1,30 @@
 import KartuProduk from "@/components/KartuProduk";
-import CatatanBelumAktif from "@/components/CatatanBelumAktif";
-import { produkContoh } from "@/lib/data-contoh";
+import { buatKoneksiServer } from "@/lib/supabase/server";
 import { toko } from "@/lib/toko";
 
-// US-01: halaman ini masih memakai data contoh.
-// Tugas peserta: ambil daftar produk dari tabel "produk" di Supabase, di sisi server.
-export default function HalamanKatalog() {
-  const daftarProduk = produkContoh;
+export const dynamic = "force-dynamic";
+
+export default async function HalamanKatalog() {
+  let daftarProduk = [];
+  let pesanError = null;
+
+  try {
+    const supabase = buatKoneksiServer();
+    const { data, error } = await supabase
+      .from("produk")
+      .select("id, nama, harga, foto_url, kategori")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Gagal mengambil daftar produk:", error.message);
+      pesanError = "Gagal mengambil daftar produk dari database. Silakan muat ulang halaman.";
+    } else {
+      daftarProduk = data ?? [];
+    }
+  } catch (err) {
+    console.error("Gagal terhubung ke Supabase:", err);
+    pesanError = "Gagal terhubung ke database. Periksa pengaturan server dan coba lagi.";
+  }
 
   return (
     <>
@@ -22,14 +40,24 @@ export default function HalamanKatalog() {
         <h2 id="judul-produk" className="text-xl font-bold">
           Produk kami
         </h2>
-        <CatatanBelumAktif>
-          Masih data contoh. Sambungkan ke database: lihat US-01 di docs/user-stories.md.
-        </CatatanBelumAktif>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-          {daftarProduk.map((produk) => (
-            <KartuProduk key={produk.id} produk={produk} />
-          ))}
-        </div>
+        {pesanError ? (
+          <p
+            role="alert"
+            className="rounded-lg border border-bahaya bg-permukaan px-4 py-3 text-sm text-bahaya"
+          >
+            {pesanError}
+          </p>
+        ) : daftarProduk.length === 0 ? (
+          <p className="rounded-lg border border-garis bg-permukaan px-4 py-6 text-sm text-teks-lembut">
+            Belum ada produk
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+            {daftarProduk.map((produk) => (
+              <KartuProduk key={produk.id} produk={produk} />
+            ))}
+          </div>
+        )}
       </section>
     </>
   );
