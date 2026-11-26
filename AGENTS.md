@@ -51,7 +51,7 @@ Identitas toko (nama, nomor WhatsApp, alamat, jam buka) ada di `lib/toko.js`.
 6. Hapus komponen `CatatanBelumAktif` dari halaman yang fiturnya sudah selesai.
 7. Setelah selesai, jelaskan singkat: file apa saja yang diubah dan cara mengetesnya.
 
-## Hasil [Integrasi Supabase untuk Daftar Produk]
+## Hasil (US-1) [Integrasi Supabase untuk Daftar Produk]
 
 Analyzed AGENTS.md:L1-52
 Analyzed user-stories.md:L1-614
@@ -113,3 +113,38 @@ Perubahan untuk **US-01 (Katalog dari database)** sudah selesai:
    - Buka DevTools > tab **Network**, muat ulang halaman, dan pastikan tidak ada permintaan langsung dari browser ke `supabase.co`.
    - Untuk menguji kondisi kosong, kosongkan sementara tabel `produk` (atau uji pada database kosong) dan pastikan tampil tulisan `"Belum ada produk"`.
    - Untuk menguji kondisi error, ubah sementara nilai `SUPABASE_SECRET_KEY` menjadi tidak valid lalu muat ulang halaman untuk memastikan pesan error tampil dengan jelas.
+
+## Hasil (US-2) [Supabase Product Detail SSR]
+
+Analyzed user-stories.md:L1-614
+Analyzed page.jsx:L1-40
+Analyzed server.js:L1-21
+Analyzed page.jsx:L1-64
+Analyzed AGENTS.md:L1-117
+Analyzed schema.sql:L1-90
+Analyzing not-found.jsx
+Edited page.jsx
+Ran build Next.js application
+
+Perubahan untuk **US-02 (Detail produk)** sudah selesai.
+
+### File yang diubah
+
+- [page.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/produk/[id]/page.jsx):
+  - Mengambil satu produk dari tabel `produk` di Supabase (`id, nama, harga, deskripsi, foto_url, kategori`) berdasarkan `id` dari `await params` di sisi server menggunakan `buatKoneksiServer()` dari [server.js](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/lib/supabase/server.js).
+  - Menambahkan `export const dynamic = "force-dynamic"` agar halaman selalu dirender di server per permintaan.
+  - Memanggil `notFound()` jika format `id` bukan angka bulat positif atau jika produk tidak ditemukan di database.
+  - Menghapus komponen `CatatanBelumAktif` dan ketergantungan pada `cariProdukContoh`, sambil mempertahankan tampilan halaman dan komponen `TombolWhatsApp`.
+
+### Verifikasi
+
+- `npm --prefix /home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm run build` berhasil tanpa error, dan rute `/produk/[id]` tercatat sebagai dynamic server-rendered (`ƒ /produk/[id]`).
+
+### Cara mengetesnya
+
+1. Jalankan server pengembangan di folder proyek:
+   ```bash
+   npm run dev
+   ```
+2. Buka beranda `http://localhost:3000`, lalu klik salah satu produk untuk membuka `/produk/[id]`. Pastikan foto, kategori, nama, harga rupiah, deskripsi, dan tombol WhatsApp tampil sesuai data dari Supabase, tanpa kotak `CatatanBelumAktif`.
+3. Buka URL dengan ID yang tidak ada (misalnya `http://localhost:3000/produk/999999` atau `http://localhost:3000/produk/abc`) dan pastikan tampil halaman "tidak ditemukan" (`404`).
