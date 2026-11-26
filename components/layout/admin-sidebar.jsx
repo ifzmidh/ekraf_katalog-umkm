@@ -11,17 +11,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useToko } from "@/components/TokoProvider";
 import { cn } from "@/lib/utils";
-import { toko } from "@/lib/toko";
 
 const navigasiUtama = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard, cocok: (path) => path === "/admin" },
   { label: "Produk", href: "/admin/produk", icon: Package, cocok: (path) => path.startsWith("/admin/produk") },
+  { label: "Pengaturan toko", href: "/admin/pengaturan-toko", icon: Store, cocok: (path) => path.startsWith("/admin/pengaturan-toko") },
 ];
 
 const navigasiBertahap = [
   { label: "Kategori", icon: Tags },
-  { label: "Pengaturan toko", icon: Store },
   { label: "Ulasan", icon: MessageSquareText },
   { label: "Aktivitas", icon: History },
 ];
@@ -70,10 +70,12 @@ function IsiNavigasi({ onNavigate }) {
 }
 
 function IdentitasToko() {
+  const toko = useToko();
   return <p className="px-6 py-4 text-xs text-muted-foreground">Panel admin {toko.nama}</p>;
 }
 
 export function AdminMobileSidebar() {
+  const toko = useToko();
   return (
     <Sheet>
       <SheetTrigger render={<Button variant="ghost" size="icon" aria-label="Buka navigasi" />}>
@@ -91,6 +93,7 @@ export function AdminMobileSidebar() {
 }
 
 export default function AdminSidebar() {
+  const toko = useToko();
   return (
     <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar md:flex">
       <Link href="/admin" className="border-b border-sidebar-border px-6 py-5 text-base font-semibold text-sidebar-foreground">

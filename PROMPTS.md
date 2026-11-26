@@ -760,3 +760,34 @@ Implementasi US-36 dari `docs/prompt/US-21,23,24,36.md`.
   - `lib/recently-viewed/recently-viewed-utils.js` _(baru)_ — Key `umkm-recently-viewed`, urutan terbaru di atas, tanpa duplikasi, batas maksimal 10 produk.
   - `components/recently-viewed/TrackProductView.jsx`, `components/recently-viewed/RecentlyViewed.jsx` _(baru)_ — Pencatatan riwayat saat detail produk dibuka dan section `"Terakhir Dilihat"` di beranda (disembunyikan jika kosong).
   - `app/produk/[id]/page.jsx`, `app/page.jsx` _(diubah)_.
+
+---
+
+## US-22 Halaman Tentang dan kontak toko
+
+**Prompt:**
+Implementasi US-22 dari `docs/prompt/US-22,43.md`.
+
+**Hasil:**
+- **Status:** `BLOCKED` (kode selesai dan build produksi lulus; menunggu eksekusi manual `docs/migration-US-22-43.sql` dan uji E2E di browser).
+- **File dibuat/diubah:**
+  - `app/tentang/page.jsx` _(baru)_ — Halaman publik `/tentang` menampilkan nama toko, profil/deskripsi, alamat lengkap + tombol Google Maps (jika alamat tersedia), jam operasional, serta kontak & tombol WhatsApp dari database (`ambilDataToko()`). Menangani empty state tanpa membuat konten palsu.
+  - `components/Header.jsx` & `components/Footer.jsx` _(diubah)_ — Menambahkan tautan ke `/tentang` pada navigasi header dan footer.
+
+---
+
+## US-43 Pengaturan toko dari admin
+
+**Prompt:**
+Implementasi US-43 dari `docs/prompt/US-22,43.md`.
+
+**Hasil:**
+- **Status:** `BLOCKED` (kode selesai, unit check validasi WhatsApp & build produksi lulus; menunggu eksekusi manual `docs/migration-US-22-43.sql` dan uji E2E di browser).
+- **File dibuat/diubah:**
+  - `docs/migration-US-22-43.sql` _(baru)_ — Tabel singleton `pengaturan_toko` (`id = 1 CHECK (id = 1)`), RLS `authenticated`, dan data awal selaras `lib/toko.js`.
+  - `lib/toko-validation.js` _(baru)_ — Validasi & normalisasi nomor WhatsApp (`08...` → `628...`, tolak URL/format rusak) serta `buatUrlWhatsApp()`.
+  - `lib/toko-server.js` _(baru)_ — Server resolver `ambilDataToko()` dengan `React.cache()` dan fallback aman ke `lib/toko.js`.
+  - `components/TokoProvider.jsx` _(baru)_ — Context untuk menyalurkan konfigurasi toko dari server ke seluruh Client Components.
+  - `app/admin/pengaturan-toko/page.jsx` & `FormPengaturanToko.jsx` _(baru)_ — Halaman dan form pengaturan toko di admin (nama toko, nomor WhatsApp, jam buka, alamat, deskripsi).
+  - `app/admin/actions.js` _(diubah)_ — Server Action `simpanPengaturanToko` dengan pengecekan `periksaSesiAdmin()` (`supabase.auth.getUser()`), validasi server, penyimpanan via sesi RLS, dan `revalidatePath`.
+  - `app/layout.jsx`, `app/page.jsx`, `components/Header.jsx`, `components/Footer.jsx`, `components/PemesanProduk.jsx`, `components/TombolWhatsApp.jsx`, `components/cart/CartSheet.jsx`, `components/shared/ShareProductButton.jsx`, `components/layout/admin-sidebar.jsx`, `components/admin/admin-header.jsx`, `components/NavAdmin.jsx` _(diubah)_ — Mengintegrasikan data toko terpusat dari database dengan `lib/toko.js` sebagai fallback.

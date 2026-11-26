@@ -11,7 +11,7 @@ import PaginasiKatalog from "@/components/PaginasiKatalog";
 import RecentlyViewed from "@/components/recently-viewed/RecentlyViewed";
 import { buttonVariants } from "@/components/ui/button";
 import { buatKoneksiServer } from "@/lib/supabase/server";
-import { toko } from "@/lib/toko";
+import { ambilDataToko } from "@/lib/toko-server";
 
 export const dynamic = "force-dynamic";
 
@@ -40,7 +40,10 @@ function terapkanSort(query, sort) {
 }
 
 export default async function HalamanKatalog({ searchParams }) {
-  const params = await searchParams;
+  const [params, dataToko] = await Promise.all([
+    searchParams,
+    ambilDataToko(),
+  ]);
 
   const kategoriDipilih =
     typeof params?.kategori === "string" ? params.kategori.trim() : "";
@@ -123,17 +126,17 @@ export default async function HalamanKatalog({ searchParams }) {
           Katalog produk lokal
         </p>
         <h1 className="mt-3 max-w-3xl font-heading text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl">
-          {toko.nama}
+          {dataToko.nama}
         </h1>
         <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">
-          {toko.tagline}
+          {dataToko.deskripsi || dataToko.tagline}
         </p>
         <div className="mt-8 flex flex-wrap items-center gap-4">
           <Link href="#produk" className={buttonVariants({ size: "lg" })}>
             Lihat produk
             <ArrowDownIcon aria-hidden="true" />
           </Link>
-          <p className="text-sm text-muted-foreground">{toko.jamBuka}</p>
+          <p className="text-sm text-muted-foreground">{dataToko.jamBuka}</p>
         </div>
       </section>
 

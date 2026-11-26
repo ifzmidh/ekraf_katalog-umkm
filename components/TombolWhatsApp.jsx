@@ -1,11 +1,15 @@
+"use client";
+
 import { formatRupiah } from "@/lib/format";
-import { toko } from "@/lib/toko";
+import { useToko } from "@/components/TokoProvider";
+import { buatUrlWhatsApp } from "@/lib/toko-validation";
 import { MessageCircleIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function TombolWhatsApp({ produk }) {
+  const toko = useToko();
   const pesan = `Halo ${toko.nama}, saya tertarik dengan produk ${produk.nama} (${formatRupiah(produk.harga)}). Apakah masih tersedia?`;
-  const url = `https://wa.me/${toko.nomorWhatsApp}?text=${encodeURIComponent(pesan)}`;
+  const url = buatUrlWhatsApp(toko.nomorWhatsApp, pesan);
 
   return (
     <Button

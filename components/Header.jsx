@@ -1,7 +1,10 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useToko } from "@/components/TokoProvider";
 import CartButton from "@/components/cart/CartButton";
 import FavoritesHeaderLink from "@/components/favorites/FavoritesHeaderLink";
-import { toko } from "@/lib/toko";
 import { cn } from "@/lib/utils";
 
 function buatUrlKategori(kategori, kataKunci) {
@@ -13,6 +16,10 @@ function buatUrlKategori(kategori, kataKunci) {
 }
 
 export default function Header({ categories = [], selectedCategory, query = "" }) {
+  const toko = useToko();
+  const pathname = usePathname();
+  const isTentang = pathname === "/tentang";
+
   return (
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
       <div className="mx-auto flex max-w-5xl items-center gap-5 px-4 py-3">
@@ -38,8 +45,17 @@ export default function Header({ categories = [], selectedCategory, query = "" }
               {category}
             </Link>
           ))}
-          <Link href="/#tentang" className="rounded-md px-3 py-2 font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
-            Tentang toko
+          <Link
+            href="/tentang"
+            aria-current={isTentang ? "page" : undefined}
+            className={cn(
+              "rounded-md px-3 py-2 font-medium transition-colors",
+              isTentang
+                ? "bg-accent text-accent-foreground"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+            )}
+          >
+            Tentang
           </Link>
         </nav>
         <div className="flex shrink-0 items-center gap-1.5">

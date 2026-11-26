@@ -34,9 +34,10 @@ import {
 } from "@/components/ui/sheet";
 import { buildWhatsAppCheckoutUrl } from "@/lib/cart/cart-utils";
 import { formatRupiah } from "@/lib/format";
-import { toko } from "@/lib/toko";
+import { useToko } from "@/components/TokoProvider";
 
 export default function CartSheet() {
+  const toko = useToko();
   const {
     items,
     hydrated,

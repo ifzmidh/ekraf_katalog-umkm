@@ -68,3 +68,39 @@ Terakhir diperbarui: 26 November 2026
 1. Saat tombol **Pesan Semua via WhatsApp** diklik di `CartSheet`, client memanggil `/api/produk-by-ids` untuk memvalidasi ulang stok, harga aktif (`harga_diskon` jika valid, atau `harga`), dan keberadaan produk di database.
 2. Jika ada produk yang habis (`stok === 0`), dihapus dari database, atau `quantity > stok`, checkout dibatalkan dan pengguna diminta memperbarui keranjang.
 3. Jika seluruh item valid, `buildWhatsAppCheckoutUrl` menyusun satu pesan terstruktur berisi nomor urut, nama produk, `quantity x hargaAktif = subtotal`, dan `Total`, lalu mengarahkannya ke `https://wa.me/<nomorWhatsApp>?text=<encoded>` menggunakan `toko.nomorWhatsApp` dari `lib/toko.js`.
+
+---
+
+## Status Fitur Tahap 4 (US-22, US-43)
+
+| User Story | Status | Catatan |
+| --- | --- | --- |
+| **US-22 Halaman Tentang dan Kontak Toko** | **BLOCKED** (Menunggu Migration SQL & Uji E2E) | Kode selesai (`app/tentang/page.jsx`, tautan navigasi di `components/Header.jsx` dan `components/Footer.jsx`, tombol Google Maps & CTA WhatsApp, penanganan empty state alamat/deskripsi/jam buka). Build produksi lulus (`exit code 0`). Memerlukan eksekusi manual `docs/migration-US-22-43.sql` di Supabase SQL Editor dan uji E2E di browser. |
+| **US-43 Pengaturan Toko dari Admin** | **BLOCKED** (Menunggu Migration SQL & Uji E2E) | Kode selesai (`docs/migration-US-22-43.sql`, `lib/toko-validation.js`, `lib/toko-server.js`, `components/TokoProvider.jsx`, `app/admin/pengaturan-toko/page.jsx`, `FormPengaturanToko.jsx`, `simpanPengaturanToko` di `app/admin/actions.js`, serta integrasi ke Header, Footer, `/`, `/tentang`, `PemesanProduk`, `TombolWhatsApp`, `CartSheet`, `ShareProductButton`, dan `AdminSidebar`). Validasi WhatsApp & build produksi lulus (`exit code 0`). Memerlukan eksekusi manual `docs/migration-US-22-43.sql` dan uji E2E di browser. |
+
+## Dokumentasi Teknis Tahap 4
+
+### 1. Schema Tabel `pengaturan_toko` (`docs/migration-US-22-43.sql`)
+- Tabel singleton (`id INTEGER PRIMARY KEY DEFAULT 1 CHECK (id = 1)`) menjamin hanya ada satu konfigurasi toko aktif:
+  - `id`: `INTEGER PRIMARY KEY DEFAULT 1 CHECK (id = 1)`
+  - `nama_toko`: `TEXT NOT NULL`
+  - `nomor_whatsapp`: `TEXT NOT NULL`
+  - `jam_buka`: `TEXT NOT NULL`
+  - `alamat`: `TEXT NOT NULL`
+  - `deskripsi`: `TEXT`
+  - `updated_at`: `TIMESTAMPTZ NOT NULL DEFAULT now()`
+- RLS diaktifkan (`admin_baca_pengaturan_toko`, `admin_tambah_pengaturan_toko`, `admin_ubah_pengaturan_toko` untuk `authenticated` dengan syarat `id = 1`).
+- Migration menyisipkan data awal (`ON CONFLICT (id) DO NOTHING`) yang selaras dengan `lib/toko.js`.
+
+### 2. Mekanisme Pengambilan Data & Fallback `lib/toko.js`
+- Resolver server `ambilDataToko()` di `lib/toko-server.js` menggunakan `React.cache()` (1 query per request) dan membaca tabel `pengaturan_toko` (`id = 1`) via `buatKoneksiServer()`.
+- Jika query gagal, tabel belum dimigrasi, atau baris belum tersedia, aplikasi otomatis memakai nilai fallback dari `lib/toko.js` agar tampilan publik dan URL WhatsApp tetap berjalan tanpa crash.
+- `app/layout.jsx` meneruskan `initialToko` ke `TokoProvider` (`components/TokoProvider.jsx`) sehingga seluruh komponen client (`Header`, `Footer`, `PemesanProduk`, `TombolWhatsApp`, `CartSheet`, `ShareProductButton`, `AdminSidebar`) memakai satu sumber data konsisten.
+
+### 3. Validasi & Normalisasi Nomor WhatsApp (`lib/toko-validation.js`)
+- Menolak input kosong, URL (`https://`, `wa.me`, `whatsapp.com`), karakter tidak valid, awalan ganda `620...`, serta panjang di luar rentang 9–15 digit.
+- Menormalisasi awalan lokal Indonesia `0...` menjadi `62...` (mis. `081234567890` → `6281234567890`) dan menghilangkan `+`, spasi, `-`, `.`, maupun tanda kurung tanpa menggandakan kode negara.
+
+### 4. Halaman Admin & Publik serta Proteksi Server-Side
+- **Halaman Publik:** `/tentang` (`app/tentang/page.jsx`) menampilkan profil, alamat (+ tautan Google Maps jika terisi), jam operasional, dan tombol WhatsApp dari database.
+- **Halaman Admin:** `/admin/pengaturan-toko` diproteksi oleh `proxy.js`, pemeriksaan sesi `buatKoneksiSesi()` + `supabase.auth.getUser()` di server page dan Server Action `simpanPengaturanToko` (menggunakan sesi admin + RLS, bukan secret key), serta memicu `revalidatePath("/", "layout")` agar perubahan langsung tercermin di halaman publik.

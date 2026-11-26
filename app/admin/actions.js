@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { buatKoneksiServer, buatKoneksiSesi } from "@/lib/supabase/server";
+import { normalisasiNomorWhatsApp } from "@/lib/toko-validation";
 
 const BUCKET_PRODUK = "products";
 const UKURAN_MAKSIMAL_FOTO = 2 * 1024 * 1024;
@@ -485,5 +486,94 @@ export async function hapusProduk(id) {
     return { berhasil: true };
   } catch {
     return { error: "Terjadi kesalahan pada server saat menghapus produk." };
+  }
+}
+
+export async function simpanPengaturanToko(_stateSebelumnya, formData) {
+  const values = {
+    nama_toko: String(formData.get("nama_toko") || "").trim(),
+    nomor_whatsapp: String(formData.get("nomor_whatsapp") || "").trim(),
+    jam_buka: String(formData.get("jam_buka") || "").trim(),
+    alamat: String(formData.get("alamat") || "").trim(),
+    deskripsi: String(formData.get("deskripsi") || "").trim(),
+  };
+
+  try {
+    const sesi = await periksaSesiAdmin();
+    if (sesi.error) {
+      return { error: sesi.error, values };
+    }
+
+    if (!values.nama_toko) {
+      return { error: "Nama toko wajib diisi.", values };
+    }
+    if (values.nama_toko.length > 120) {
+      return { error: "Nama toko maksimal 120 karakter.", values };
+    }
+
+    const hasilWa = normalisasiNomorWhatsApp(values.nomor_whatsapp);
+    if (!hasilWa.valid) {
+      return { error: hasilWa.error, values };
+    }
+
+    if (!values.jam_buka) {
+      return { error: "Jam operasional wajib diisi.", values };
+    }
+    if (values.jam_buka.length > 300) {
+      return { error: "Jam operasional maksimal 300 karakter.", values };
+    }
+
+    if (!values.alamat) {
+      return { error: "Alamat toko wajib diisi.", values };
+    }
+    if (values.alamat.length > 500) {
+      return { error: "Alamat toko maksimal 500 karakter.", values };
+    }
+
+    if (values.deskripsi.length > 2000) {
+      return { error: "Deskripsi toko maksimal 2000 karakter.", values };
+    }
+
+    const payload = {
+      id: 1,
+      nama_toko: values.nama_toko,
+      nomor_whatsapp: hasilWa.nomor,
+      jam_buka: values.jam_buka,
+      alamat: values.alamat,
+      deskripsi: values.deskripsi || null,
+      updated_at: new Date().toISOString(),
+    };
+
+    const { error } = await sesi.supabase
+      .from("pengaturan_toko")
+      .upsert(payload, { onConflict: "id" });
+
+    if (error) {
+      console.error("Gagal menyimpan pengaturan toko:", error.message);
+      return {
+        error:
+          "Gagal menyimpan pengaturan toko ke database. Pastikan tabel pengaturan_toko sudah dibuat melalui migration.",
+        values,
+      };
+    }
+
+    revalidatePath("/", "layout");
+    revalidatePath("/");
+    revalidatePath("/tentang");
+    revalidatePath("/admin", "layout");
+    revalidatePath("/admin/pengaturan-toko");
+
+    return {
+      berhasil: "Pengaturan toko berhasil disimpan.",
+      values: {
+        ...values,
+        nomor_whatsapp: hasilWa.nomor,
+      },
+    };
+  } catch {
+    return {
+      error: "Terjadi kesalahan pada server saat menyimpan pengaturan toko.",
+      values,
+    };
   }
 }

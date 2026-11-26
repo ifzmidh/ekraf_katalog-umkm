@@ -5,9 +5,10 @@ import { Share2Icon, CopyIcon, CheckIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { toko } from "@/lib/toko";
+import { useToko } from "@/components/TokoProvider";
 
 export default function ShareProductButton({ productId, productName }) {
+  const toko = useToko();
   const [copied, setCopied] = useState(false);
   const [fallbackUrl, setFallbackUrl] = useState("");
 

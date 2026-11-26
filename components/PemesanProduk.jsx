@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatRupiah } from "@/lib/format";
-import { toko } from "@/lib/toko";
+import { useToko } from "@/components/TokoProvider";
+import { buatUrlWhatsApp } from "@/lib/toko-validation";
 
 /**
  * Komponen client untuk memilih jumlah dan varian produk sebelum memesan.
@@ -16,6 +17,7 @@ import { toko } from "@/lib/toko";
  * Pesan WhatsApp disusun dari state tersebut saat tombol diklik.
  */
 export default function PemesanProduk({ produk }) {
+  const toko = useToko();
   const [jumlah, setJumlah] = useState(1);
   const [varian, setVarian] = useState("");
 
@@ -54,7 +56,7 @@ export default function PemesanProduk({ produk }) {
     );
   }
 
-  const urlWhatsApp = `https://wa.me/${toko.nomorWhatsApp}?text=${encodeURIComponent(buatPesan())}`;
+  const urlWhatsApp = buatUrlWhatsApp(toko.nomorWhatsApp, buatPesan());
 
   return (
     <div className="flex w-full flex-col gap-5 sm:w-auto sm:min-w-72">

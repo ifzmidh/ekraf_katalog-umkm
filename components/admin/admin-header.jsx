@@ -28,6 +28,7 @@ function informasiHalaman(pathname) {
   if (pathname === "/admin/produk") return { title: "Produk", parent: "Dashboard" };
   if (pathname === "/admin/produk/baru") return { title: "Tambah produk", parent: "Produk" };
   if (pathname.includes("/ubah")) return { title: "Ubah produk", parent: "Produk" };
+  if (pathname === "/admin/pengaturan-toko") return { title: "Pengaturan toko", parent: "Dashboard" };
   if (pathname === "/admin/password") return { title: "Ganti password", parent: "Pengaturan akun" };
   return { title: "Admin", parent: null };
 }
