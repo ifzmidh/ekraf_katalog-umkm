@@ -1,5 +1,8 @@
 import "./globals.css";
 import AppChrome from "@/components/layout/app-chrome";
+import { CartProvider } from "@/components/cart/CartProvider";
+import CartSheet from "@/components/cart/CartSheet";
+import { FavoritesProvider } from "@/components/favorites/FavoritesProvider";
 import { toko } from "@/lib/toko";
 import { Geist } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -23,8 +26,13 @@ export default function RootLayout({ children }) {
     <html lang="id" className={geist.variable}>
       <body className="flex min-h-screen flex-col font-sans antialiased">
         <TooltipProvider>
-          <AppChrome>{children}</AppChrome>
-          <Toaster richColors closeButton />
+          <FavoritesProvider>
+            <CartProvider>
+              <AppChrome>{children}</AppChrome>
+              <CartSheet />
+              <Toaster richColors closeButton />
+            </CartProvider>
+          </FavoritesProvider>
         </TooltipProvider>
       </body>
     </html>

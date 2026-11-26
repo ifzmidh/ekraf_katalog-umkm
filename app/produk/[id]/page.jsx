@@ -4,6 +4,9 @@ import { ArrowLeftIcon } from "lucide-react";
 import PemesanProduk from "@/components/PemesanProduk";
 import KartuProduk from "@/components/KartuProduk";
 import GaleriProduk from "@/components/GaleriProduk";
+import FavoriteButton from "@/components/favorites/FavoriteButton";
+import TrackProductView from "@/components/recently-viewed/TrackProductView";
+import ShareProductButton from "@/components/shared/ShareProductButton";
 import SectionHeading from "@/components/design/SectionHeading";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -102,6 +105,7 @@ export default async function HalamanDetailProduk({ params }) {
 
   return (
     <div className="-mx-4">
+      <TrackProductView productId={produk.id} />
       <article className="mx-auto max-w-5xl px-4 py-8 sm:py-12">
         <Breadcrumb>
           <BreadcrumbList>
@@ -198,6 +202,19 @@ export default async function HalamanDetailProduk({ params }) {
               ) : (
                 <PemesanProduk produk={produk} />
               )}
+
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <FavoriteButton
+                  productId={produk.id}
+                  productName={produk.nama}
+                  variant="button"
+                />
+                <ShareProductButton
+                  productId={produk.id}
+                  productName={produk.nama}
+                />
+              </div>
+
               <Button
                 variant="outline"
                 className="w-full"

@@ -1,4 +1,6 @@
 import Link from "next/link";
+import CartButton from "@/components/cart/CartButton";
+import FavoritesHeaderLink from "@/components/favorites/FavoritesHeaderLink";
 import { toko } from "@/lib/toko";
 import { cn } from "@/lib/utils";
 
@@ -40,6 +42,10 @@ export default function Header({ categories = [], selectedCategory, query = "" }
             Tentang toko
           </Link>
         </nav>
+        <div className="flex shrink-0 items-center gap-1.5">
+          <FavoritesHeaderLink />
+          <CartButton />
+        </div>
       </div>
     </header>
   );

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { MinusIcon, PlusIcon, MessageCircleIcon } from "lucide-react";
 import Link from "next/link";
+import AddToCartButton from "@/components/cart/AddToCartButton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,18 +19,21 @@ export default function PemesanProduk({ produk }) {
   const [jumlah, setJumlah] = useState(1);
   const [varian, setVarian] = useState("");
 
+  const maxStok =
+    typeof produk.stok === "number" && produk.stok > 0 ? produk.stok : null;
+
   function kurangi() {
     setJumlah((j) => Math.max(1, j - 1));
   }
 
   function tambah() {
-    setJumlah((j) => j + 1);
+    setJumlah((j) => (maxStok !== null ? Math.min(maxStok, j + 1) : j + 1));
   }
 
   function handleJumlahInput(e) {
     const nilai = parseInt(e.target.value, 10);
     if (!isNaN(nilai) && nilai >= 1) {
-      setJumlah(nilai);
+      setJumlah(maxStok !== null ? Math.min(maxStok, nilai) : nilai);
     }
   }
 
@@ -82,6 +86,7 @@ export default function PemesanProduk({ produk }) {
             variant="outline"
             size="icon"
             onClick={tambah}
+            disabled={maxStok !== null && jumlah >= maxStok}
             aria-label="Tambah jumlah"
           >
             <PlusIcon aria-hidden="true" />
@@ -107,18 +112,28 @@ export default function PemesanProduk({ produk }) {
         />
       </div>
 
-      {/* Tombol WhatsApp */}
-      <Button
-        size="lg"
-        className="w-full"
-        nativeButton={false}
-        render={
-          <a href={urlWhatsApp} target="_blank" rel="noopener noreferrer" />
-        }
-      >
-        <MessageCircleIcon aria-hidden="true" />
-        Pesan via WhatsApp
-      </Button>
+      {/* Tombol Keranjang & WhatsApp */}
+      <div className="flex flex-col gap-2.5">
+        <AddToCartButton
+          produk={produk}
+          quantity={jumlah}
+          variant="secondary"
+          size="lg"
+          className="w-full"
+        />
+
+        <Button
+          size="lg"
+          className="w-full"
+          nativeButton={false}
+          render={
+            <a href={urlWhatsApp} target="_blank" rel="noopener noreferrer" />
+          }
+        >
+          <MessageCircleIcon aria-hidden="true" />
+          Pesan via WhatsApp
+        </Button>
+      </div>
 
       {/* Tombol kembali */}
       <Button

@@ -1,4 +1,6 @@
 import Link from "next/link";
+import AddToCartButton from "@/components/cart/AddToCartButton";
+import FavoriteButton from "@/components/favorites/FavoriteButton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import GambarProduk from "@/components/GambarProduk";
@@ -24,10 +26,13 @@ export default function ProductCard({ produk }) {
   const isTerlaris = Boolean(produk.is_terlaris);
 
   return (
-    <Link href={`/produk/${produk.id}`} className="group block focus-visible:rounded-xl">
-      <Card className="h-full gap-0 py-0 transition-shadow duration-200 group-hover:shadow-md">
-        {/* Wrapper gambar – posisi relatif untuk badge */}
-        <div className="relative overflow-hidden">
+    <Card className="group h-full gap-0 py-0 transition-shadow duration-200 hover:shadow-md">
+      {/* Wrapper gambar – posisi relatif untuk badge dan tombol favorit */}
+      <div className="relative overflow-hidden">
+        <Link
+          href={`/produk/${produk.id}`}
+          className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
           <GambarProduk
             src={produk.foto_url}
             alt={produk.nama}
@@ -36,34 +41,46 @@ export default function ProductCard({ produk }) {
               stokHabis ? "opacity-60 grayscale" : "",
             ].join(" ")}
           />
+        </Link>
 
-          {/* Badge pojok kiri atas – US-20 Baru & Terlaris */}
-          {(isBaru || isTerlaris) && (
-            <div className="absolute left-2 top-2 flex flex-col gap-1">
-              {isBaru && (
-                <span className="rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold leading-tight text-white shadow">
-                  Baru
-                </span>
-              )}
-              {isTerlaris && (
-                <span className="rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-bold leading-tight text-white shadow">
-                  Terlaris
-                </span>
-              )}
-            </div>
-          )}
+        {/* Tombol favorit pojok kanan atas – US-24 */}
+        <FavoriteButton
+          productId={produk.id}
+          productName={produk.nama}
+          className="absolute right-2 top-2 z-10"
+        />
 
-          {/* Badge stok habis – US-19 */}
-          {stokHabis && (
-            <div className="absolute inset-0 flex items-end justify-center pb-3">
-              <span className="rounded-full bg-destructive/90 px-3 py-1 text-xs font-bold text-white shadow">
-                Habis
+        {/* Badge pojok kiri atas – US-20 Baru & Terlaris */}
+        {(isBaru || isTerlaris) && (
+          <div className="pointer-events-none absolute left-2 top-2 flex flex-col gap-1">
+            {isBaru && (
+              <span className="rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold leading-tight text-white shadow">
+                Baru
               </span>
-            </div>
-          )}
-        </div>
+            )}
+            {isTerlaris && (
+              <span className="rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-bold leading-tight text-white shadow">
+                Terlaris
+              </span>
+            )}
+          </div>
+        )}
 
-        <CardContent className="flex flex-1 flex-col gap-2 p-4">
+        {/* Badge stok habis – US-19 */}
+        {stokHabis && (
+          <div className="pointer-events-none absolute inset-0 flex items-end justify-center pb-3">
+            <span className="rounded-full bg-destructive/90 px-3 py-1 text-xs font-bold text-white shadow">
+              Habis
+            </span>
+          </div>
+        )}
+      </div>
+
+      <CardContent className="flex flex-1 flex-col gap-2 p-4">
+        <Link
+          href={`/produk/${produk.id}`}
+          className="flex flex-1 flex-col gap-2 focus-visible:outline-none"
+        >
           {produk.kategori ? (
             <Badge variant="secondary" className="w-fit">
               {produk.kategori}
@@ -97,9 +114,12 @@ export default function ProductCard({ produk }) {
               </p>
             )}
           </div>
-        </CardContent>
-      </Card>
-    </Link>
+        </Link>
+
+        {/* US-21: Tombol tambah ke keranjang */}
+        <AddToCartButton produk={produk} className="mt-2 w-full" />
+      </CardContent>
+    </Card>
   );
 }
 

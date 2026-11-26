@@ -702,3 +702,61 @@ Implementasi US-20 dari `docs/prompt/US-18,19,20.md`.
 ### Verifikasi Build & Keamanan
 - `NODE_ENV=production npm --prefix /home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm run build` berhasil (`exit code 0`).
 - Pengecekan `grep` memastikan tidak ada environment variable berawalan `NEXT_PUBLIC_` di `app/`, `components/`, atau `lib/`.
+
+---
+
+## US-21 Keranjang, Pesan Semua via WhatsApp
+
+**Prompt:**
+Implementasi US-21 dari `docs/prompt/US-21,23,24,36.md`.
+
+**Hasil:**
+- **Status:** `BLOCKED` (kode selesai, unit check utilitas & build produksi lulus; menunggu uji E2E di browser).
+- **File dibuat/diubah:**
+  - `lib/cart/cart-utils.js` _(baru)_ — Key `umkm-cart`, sanitasi data rusak, `getHargaAktif()`, perhitungan subtotal/total, dan `buildWhatsAppCheckoutUrl()`.
+  - `components/cart/CartProvider.jsx` _(baru)_ — Context + `useReducer`, hydration-safe, pencegahan duplikasi ID, validasi stok, dan `syncWithServer()`.
+  - `components/cart/CartSheet.jsx`, `components/cart/CartItem.jsx`, `components/cart/CartButton.jsx`, `components/cart/AddToCartButton.jsx` _(baru)_ — Drawer keranjang, kontrol quantity/hapus/kosongkan, dan checkout satu pesan WhatsApp via `lib/toko.js`.
+  - `app/api/produk-by-ids/route.js` _(baru)_ — Route Handler server-side read-only untuk validasi stok & harga terbaru.
+  - `app/layout.jsx`, `components/Header.jsx`, `components/design/ProductCard.jsx`, `components/PemesanProduk.jsx` _(diubah)_.
+
+---
+
+## US-23 Bagikan atau Salin Link Produk
+
+**Prompt:**
+Implementasi US-23 dari `docs/prompt/US-21,23,24,36.md`.
+
+**Hasil:**
+- **Status:** `BLOCKED` (kode selesai dan build produksi lulus; menunggu uji E2E di browser).
+- **File dibuat/diubah:**
+  - `components/shared/ShareProductButton.jsx` _(baru)_ — Tombol bagikan dengan Web Share API (`navigator.share`), fallback Clipboard API dengan toast `"Link tersalin"`, serta fallback input salin manual jika clipboard gagal.
+  - `app/produk/[id]/page.jsx` _(diubah)_ — Menampilkan `ShareProductButton` pada halaman detail produk.
+
+---
+
+## US-24 Favorit Tersimpan di Browser
+
+**Prompt:**
+Implementasi US-24 dari `docs/prompt/US-21,23,24,36.md`.
+
+**Hasil:**
+- **Status:** `BLOCKED` (kode selesai, unit check utilitas & build produksi lulus; menunggu uji E2E di browser).
+- **File dibuat/diubah:**
+  - `lib/favorites/favorite-utils.js` _(baru)_ — Key `umkm-favorites`, penyimpanan array ID unik, dan sanitasi data rusak.
+  - `components/favorites/FavoritesProvider.jsx`, `components/favorites/FavoriteButton.jsx`, `components/favorites/FavoritesHeaderLink.jsx`, `components/favorites/FavoritesView.jsx` _(baru)_.
+  - `app/favorit/page.jsx` _(baru)_ — Halaman khusus produk favorit tanpa login.
+  - `app/layout.jsx`, `components/Header.jsx`, `components/design/ProductCard.jsx`, `app/produk/[id]/page.jsx` _(diubah)_.
+
+---
+
+## US-36 Terakhir dilihat
+
+**Prompt:**
+Implementasi US-36 dari `docs/prompt/US-21,23,24,36.md`.
+
+**Hasil:**
+- **Status:** `BLOCKED` (kode selesai, unit check utilitas & build produksi lulus; menunggu uji E2E di browser).
+- **File dibuat/diubah:**
+  - `lib/recently-viewed/recently-viewed-utils.js` _(baru)_ — Key `umkm-recently-viewed`, urutan terbaru di atas, tanpa duplikasi, batas maksimal 10 produk.
+  - `components/recently-viewed/TrackProductView.jsx`, `components/recently-viewed/RecentlyViewed.jsx` _(baru)_ — Pencatatan riwayat saat detail produk dibuka dan section `"Terakhir Dilihat"` di beranda (disembunyikan jika kosong).
+  - `app/produk/[id]/page.jsx`, `app/page.jsx` _(diubah)_.

@@ -8,6 +8,7 @@ import SectionHeading from "@/components/design/SectionHeading";
 import FilterPencarian from "@/components/FilterPencarian";
 import SortingProduk from "@/components/SortingProduk";
 import PaginasiKatalog from "@/components/PaginasiKatalog";
+import RecentlyViewed from "@/components/recently-viewed/RecentlyViewed";
 import { buttonVariants } from "@/components/ui/button";
 import { buatKoneksiServer } from "@/lib/supabase/server";
 import { toko } from "@/lib/toko";
@@ -228,6 +229,9 @@ export default async function HalamanKatalog({ searchParams }) {
           </div>
         )}
       </section>
+
+      {/* US-36: Terakhir Dilihat */}
+      <RecentlyViewed />
     </div>
   );
 }
