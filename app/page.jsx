@@ -6,20 +6,54 @@ import KartuProduk from "@/components/KartuProduk";
 import EmptyState from "@/components/design/EmptyState";
 import SectionHeading from "@/components/design/SectionHeading";
 import FilterPencarian from "@/components/FilterPencarian";
+import SortingProduk from "@/components/SortingProduk";
+import PaginasiKatalog from "@/components/PaginasiKatalog";
 import { buttonVariants } from "@/components/ui/button";
 import { buatKoneksiServer } from "@/lib/supabase/server";
 import { toko } from "@/lib/toko";
 
 export const dynamic = "force-dynamic";
 
+const PAGE_SIZE = 12;
+const SORT_VALID = ["latest", "price_asc", "price_desc"];
+
+function parsePage(val) {
+  const n = parseInt(val, 10);
+  return Number.isFinite(n) && n >= 1 ? n : 1;
+}
+
+function parseSort(val) {
+  return SORT_VALID.includes(val) ? val : "latest";
+}
+
+function terapkanSort(query, sort) {
+  switch (sort) {
+    case "price_asc":
+      return query.order("harga", { ascending: true }).order("id", { ascending: true });
+    case "price_desc":
+      return query.order("harga", { ascending: false }).order("id", { ascending: false });
+    case "latest":
+    default:
+      return query.order("created_at", { ascending: false }).order("id", { ascending: false });
+  }
+}
+
 export default async function HalamanKatalog({ searchParams }) {
   const params = await searchParams;
+
   const kategoriDipilih =
     typeof params?.kategori === "string" ? params.kategori.trim() : "";
   const kataKunci = typeof params?.q === "string" ? params.q.trim() : "";
+  const sortAktif = parseSort(typeof params?.sort === "string" ? params.sort : "");
+  const halamanSaatIni = parsePage(params?.page);
+
+  const from = (halamanSaatIni - 1) * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
 
   let daftarProduk = [];
   let daftarKategori = [];
+  let totalProduk = 0;
+  let totalHalaman = 1;
   let pesanError = null;
 
   try {
@@ -27,8 +61,7 @@ export default async function HalamanKatalog({ searchParams }) {
 
     let queryProduk = supabase
       .from("produk")
-      .select("id, nama, harga, foto_url, kategori")
-      .order("created_at", { ascending: false });
+      .select("id, nama, harga, foto_url, kategori", { count: "exact" });
 
     if (kategoriDipilih) {
       queryProduk = queryProduk.eq("kategori", kategoriDipilih);
@@ -38,6 +71,9 @@ export default async function HalamanKatalog({ searchParams }) {
       const polaCari = kataKunci.replace(/[%_\\]/g, "\\$&");
       queryProduk = queryProduk.ilike("nama", `%${polaCari}%`);
     }
+
+    queryProduk = terapkanSort(queryProduk, sortAktif);
+    queryProduk = queryProduk.range(from, to);
 
     const [hasilProduk, hasilKategori] = await Promise.all([
       queryProduk,
@@ -53,6 +89,8 @@ export default async function HalamanKatalog({ searchParams }) {
         "Gagal mengambil daftar produk dari database. Silakan muat ulang halaman.";
     } else {
       daftarProduk = hasilProduk.data ?? [];
+      totalProduk = hasilProduk.count ?? 0;
+      totalHalaman = Math.max(1, Math.ceil(totalProduk / PAGE_SIZE));
     }
 
     if (!hasilKategori.error && hasilKategori.data) {
@@ -73,6 +111,9 @@ export default async function HalamanKatalog({ searchParams }) {
   }
 
   const adaFilterAktif = Boolean(kategoriDipilih || kataKunci);
+
+  // Jika halaman melebihi total, tampilkan halaman terakhir yg valid (empty state)
+  const halamanEfektif = Math.min(halamanSaatIni, totalHalaman);
 
   return (
     <div className="-mx-4">
@@ -110,12 +151,40 @@ export default async function HalamanKatalog({ searchParams }) {
             daftarKategori={daftarKategori}
             kategoriDipilih={kategoriDipilih}
             kataKunci={kataKunci}
-            jumlahHasil={daftarProduk.length}
+            jumlahHasil={totalProduk}
             adaFilterAktif={adaFilterAktif}
           />
         </div>
 
-        <div className="mt-7">
+        {/* Baris info + sorting */}
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-muted-foreground">
+            {pesanError ? null : (
+              <>
+                Menampilkan{" "}
+                <span className="font-medium text-foreground">
+                  {totalProduk}
+                </span>{" "}
+                produk
+                {totalHalaman > 1 && (
+                  <>
+                    {" "}· Halaman{" "}
+                    <span className="font-medium text-foreground">
+                      {halamanEfektif}
+                    </span>{" "}
+                    dari{" "}
+                    <span className="font-medium text-foreground">
+                      {totalHalaman}
+                    </span>
+                  </>
+                )}
+              </>
+            )}
+          </p>
+          <SortingProduk sortAktif={sortAktif} />
+        </div>
+
+        <div className="mt-5">
           {pesanError ? (
             <div
               role="alert"
@@ -148,6 +217,16 @@ export default async function HalamanKatalog({ searchParams }) {
             </div>
           )}
         </div>
+
+        {/* Pagination */}
+        {!pesanError && totalHalaman > 1 && (
+          <div className="mt-8">
+            <PaginasiKatalog
+              halamanSaatIni={halamanEfektif}
+              totalHalaman={totalHalaman}
+            />
+          </div>
+        )}
       </section>
     </div>
   );

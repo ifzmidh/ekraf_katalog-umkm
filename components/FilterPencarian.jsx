@@ -30,9 +30,19 @@ export default function FilterPencarian({
   const searchParams = useSearchParams();
 
   function buatUrl(kategori, q) {
-    const params = new URLSearchParams();
-    if (kategori) params.set("kategori", kategori);
-    if (q) params.set("q", q);
+    const params = new URLSearchParams(searchParams.toString());
+    // Reset halaman saat filter berubah
+    params.delete("page");
+    if (kategori) {
+      params.set("kategori", kategori);
+    } else {
+      params.delete("kategori");
+    }
+    if (q) {
+      params.set("q", q);
+    } else {
+      params.delete("q");
+    }
     const query = params.toString();
     return query ? `/?${query}#produk` : "/#produk";
   }

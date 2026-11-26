@@ -1,10 +1,13 @@
-import { ImageOffIcon } from "lucide-react";
+import { ImageOffIcon, ArrowLeftIcon } from "lucide-react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PemesanProduk from "@/components/PemesanProduk";
+import KartuProduk from "@/components/KartuProduk";
+import SectionHeading from "@/components/design/SectionHeading";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -17,6 +20,7 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { formatRupiah } from "@/lib/format";
 import { buatKoneksiServer } from "@/lib/supabase/server";
+import TombolWhatsApp from "@/components/TombolWhatsApp";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +44,24 @@ export default async function HalamanDetailProduk({ params }) {
 
   if (!produk) {
     notFound();
+  }
+
+  // US-17: Ambil produk terkait dari kategori yang sama (maks 4, kecualikan produk aktif)
+  let produkTerkait = [];
+  if (produk.kategori) {
+    const { data: hasilTerkait, error: errorTerkait } = await supabase
+      .from("produk")
+      .select("id, nama, harga, foto_url, kategori")
+      .eq("kategori", produk.kategori)
+      .neq("id", produk.id)
+      .order("created_at", { ascending: false })
+      .limit(4);
+
+    if (errorTerkait) {
+      console.error("Gagal mengambil produk terkait:", errorTerkait.message);
+    } else {
+      produkTerkait = hasilTerkait ?? [];
+    }
   }
 
   return (
@@ -89,11 +111,38 @@ export default async function HalamanDetailProduk({ params }) {
             <div className="max-w-prose text-base leading-7 text-muted-foreground">
               {produk.deskripsi || "Deskripsi produk belum tersedia."}
             </div>
-            <div className="mt-8 w-full sm:w-auto">
-              <PemesanProduk produk={produk} />
+            <div className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:min-w-72">
+              <TombolWhatsApp produk={produk} />
+              <Button
+                variant="outline"
+                nativeButton={false}
+                render={<Link href="/" />}
+              >
+                <ArrowLeftIcon aria-hidden="true" />
+                Kembali ke katalog
+              </Button>
             </div>
           </div>
         </div>
+
+        {/* US-17: Section Produk Terkait */}
+        {produkTerkait.length > 0 && (
+          <section
+            aria-labelledby="judul-terkait"
+            className="mt-14 border-t pt-10"
+          >
+            <SectionHeading
+              id="judul-terkait"
+              title="Produk Terkait"
+              description={`Produk lain dalam kategori ${produk.kategori}.`}
+            />
+            <div className="mt-6 grid grid-cols-2 gap-4 sm:gap-5 md:grid-cols-4">
+              {produkTerkait.map((p) => (
+                <KartuProduk key={p.id} produk={p} />
+              ))}
+            </div>
+          </section>
+        )}
       </article>
     </div>
   );

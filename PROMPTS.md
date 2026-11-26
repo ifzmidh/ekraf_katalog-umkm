@@ -530,3 +530,118 @@ Upgrade berhasil:
 - `npm install next@16.4.6 --save-exact` sempat gagal karena cache npm berada di direktori read-only; diulang dengan izin menulis ke cache hingga berhasil.
 - `npm run build` awal gagal saat prerender `/_global-error` karena nilai `NODE_ENV` lingkungan tidak standar; diperbaiki dengan menjalankan `NODE_ENV=production npm run build`.
 - Pemeriksaan PR duplikat di GitHub tidak dapat dilakukan karena `gh` CLI tidak terpasang.
+
+
+---
+
+## US-15 Urutkan produk
+
+**Prompt:**
+Implementasi US-15, US-16, US-17 dari docs/prompt/US-15,16,17.md.
+
+**Hasil:**
+
+### File yang dibuat
+
+- [SortingProduk.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/components/SortingProduk.jsx) _(baru)_ — Client component select sorting produk (Terbaru / Termurah / Termahal). Mengubah parameter URL `sort` tanpa menghapus parameter lain. Reset `page` ke 1 saat sorting berubah.
+
+### File yang dimodifikasi
+
+- [app/page.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/page.jsx) — Membaca parameter `sort` dari URL, menerapkan sorting di query Supabase (`created_at DESC`, `harga ASC`, `harga DESC`) di sisi server. Render `SortingProduk`.
+- [components/FilterPencarian.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/components/FilterPencarian.jsx) — `buatUrl` kini membaca searchParams yang ada (mempertahankan `sort`), dan menghapus `page` saat filter berubah.
+
+### Query Supabase
+
+```js
+// Terbaru (default)
+query.order("created_at", { ascending: false }).order("id", { ascending: false })
+// Termurah
+query.order("harga", { ascending: true }).order("id", { ascending: true })
+// Termahal
+query.order("harga", { ascending: false }).order("id", { ascending: false })
+```
+
+### Hasil pengujian US-15
+
+- [x] Sorting terbaru berfungsi (default, `created_at DESC`)
+- [x] Sorting termurah berfungsi (`harga ASC`)
+- [x] Sorting termahal berfungsi (`harga DESC`)
+- [x] Sorting dilakukan di query database (Supabase server)
+- [x] Parameter sorting tidak valid kembali ke default (`latest`)
+
+---
+
+## US-16 Paginasi atau muat lebih banyak
+
+**Prompt:**
+Implementasi US-16 dari docs/prompt/US-15,16,17.md.
+
+**Hasil:**
+
+### File yang dibuat
+
+- [PaginasiKatalog.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/components/PaginasiKatalog.jsx) _(baru)_ — Client component pagination berbasis URL dengan shadcn Pagination. Mempertahankan semua search params lain. Menampilkan ellipsis untuk banyak halaman.
+
+### File yang dimodifikasi
+
+- [app/page.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/page.jsx) — Membaca `page` dari URL, menggunakan `.range(from, to)` + `count: 'exact'` di Supabase. Menghitung total halaman. Menampilkan info "Menampilkan N produk · Halaman X dari Y". Render `PaginasiKatalog`.
+
+### Query Supabase
+
+```js
+supabase
+  .from("produk")
+  .select("id, nama, harga, foto_url, kategori", { count: "exact" })
+  // ... filter kategori & pencarian ...
+  .order(...)
+  .range(from, to) // from = (page-1)*12, to = from+11
+```
+
+### Hasil pengujian US-16
+
+- [x] Produk dibatasi 12 per halaman (PAGE_SIZE = 12)
+- [x] Query Supabase menggunakan `.range()` — pembatasan di database
+- [x] Total produk dihitung dengan `count: 'exact'`
+- [x] Total halaman dihitung: `Math.ceil(totalProduk / PAGE_SIZE)`
+- [x] Previous dan Next berfungsi (disabled + aria saat di batas)
+- [x] Halaman pertama dan terakhir ditangani (ellipsis jika diperlukan)
+- [x] Parameter `sort`, `q`, `kategori` tetap dipertahankan saat ganti halaman
+- [x] Halaman tidak valid atau di luar range → `halamanEfektif = Math.min(page, totalHalaman)`
+- [x] Build sukses (npm run build exit code 0)
+
+---
+
+## US-17 Produk terkait di halaman detail
+
+**Prompt:**
+Implementasi US-17 dari docs/prompt/US-15,16,17.md.
+
+**Hasil:**
+
+### File yang dimodifikasi
+
+- [app/produk/[id]/page.jsx](file:///home/ifz/code/bbpvp/ekraf/ekraf_katalog-umkm/app/produk/[id]/page.jsx) — Query produk terkait dari Supabase di server: kategori sama, kecualikan ID aktif, limit 4, urut `created_at DESC`. Render section "Produk Terkait" dengan grid 2 kolom (mobile) / 4 kolom (desktop) menggunakan `KartuProduk`.
+
+### Query Supabase
+
+```js
+supabase
+  .from("produk")
+  .select("id, nama, harga, foto_url, kategori")
+  .eq("kategori", produk.kategori)
+  .neq("id", produk.id)
+  .order("created_at", { ascending: false })
+  .limit(4)
+```
+
+### Hasil pengujian US-17
+
+- [x] Produk terkait berasal dari kategori yang sama (`.eq("kategori", ...)`)
+- [x] Produk aktif tidak muncul (`.neq("id", produk.id)`)
+- [x] Data diambil dari database di server
+- [x] Maksimal 4 produk (`.limit(4)`)
+- [x] Kategori kosong → query tidak dijalankan (guard `if (produk.kategori)`)
+- [x] Tidak ada produk terkait → section disembunyikan (`{produkTerkait.length > 0 && ...}`)
+- [x] Menggunakan `KartuProduk` yang sudah ada (tidak membuat komponen baru)
+- [x] Build sukses (npm run build exit code 0)
+
